@@ -1,21 +1,43 @@
 extends ../assets/layout
 
 block style
-    link(type="text/css", rel="stylesheet", href="./#{name}.css")
+  link(type="text/css", rel="stylesheet", href="./#{name}.css")
 
 block content
 
-    fieldset
-        legend Normal
-        .demo
-            .ELazyload
-                each img in imgs
-                    .img-list
-                        img(width="100", height="100", data-src="#{img}")
+  fieldset
+    legend Normal
+    .demo
+      .ELazyload#lazyload-img
+        each img in imgs
+          .img-list
+            img(width="100", height="100", data-src="#{img}")
 
+
+  fieldset
+    legend Type: module
+    .demo
+      .ELazyload
+        .div(style="height:1000px;") 点位元素，下拉触发模块后加载
+        .mod(style="height:300px") 后加载的模块
+        .mod(style="height:300px;display:none;background:#ccc;") 后加载的隐藏模块
 
 block localScript
-    script.
-        $('.ELazyload').ELazyload({
-            debug: true
-        });
+  script.
+    $('#lazyload-img').ELazyload({
+      debug: false,
+      onError: function($img) {
+        // console.log($img);
+      }
+    });
+
+    $('.mod').ELazyload({
+      type: 'module',
+      onAppear: function() {
+        console.log('Module appear...');
+        console.log(this.$el.get(0));
+        if ( !this.$el.is(':visible') ) {
+          this.$el.fadeIn();
+        }
+      }
+    })

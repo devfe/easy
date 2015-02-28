@@ -5,6 +5,7 @@
     <link rel="stylesheet" type="text/css" href="../assets/plugins.css">
   </head>
   <body>
+    <div class="nav"><strong><a href="/">Easy UI</a></strong>&nbsp;»</div><br><br>
     <fieldset>
       <legend>DefaultIndex: 2</legend>
       <div class="demo">
@@ -103,31 +104,32 @@
         </div>
       </div>
     </fieldset>
+    <div class="clr"></div>
     <script src="../assets/jquery-1.6.4.js"></script>
     <script src="./ETab.js"></script>
     <script>
       $('.ETab').eq(0).ETab({
-          defaultIndex: 2
+        defaultIndex: 2
       });
       $('.ETab').eq(1).ETab({
-          event: 'mouseover'
+        event: 'mouseover'
       });
       $('.ETab').eq(2).ETab({
-          event: 'mouseover',
-          delay: 200
+        event: 'mouseover',
+        delay: 200
       });
       $('.ETab').eq(3).ETab({
-          onReady: function() {
-              this.contents.eq(1).ETab({
-                  selector: {
-                      item: '.sub-item',
-                      content: '.sub-content'
-                  }
-              });
-          }
+        onReady: function () {
+          this.contents.eq(1).ETab({
+            selector: {
+              item: '.sub-item',
+              content: '.sub-content'
+            }
+          });
+        }
       });
       $('.ETab').eq(4).ETab({
-          lazyload: 'data-src'
+        lazyload: 'data-src'
       });
     </script>
   </body>
