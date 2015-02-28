@@ -1,0 +1,108 @@
+extends ../assets/layout
+
+block content
+
+    fieldset
+        legend DefaultIndex: 2
+        .demo
+            .ETab
+                ul
+                    li.current(data-tab="item") Tab 1
+                    li(data-tab="item") Tab 2
+                    li(data-tab="item") Tab 3
+                div
+                    div(data-tab="content") 1. Lorem ipsum dolor sit amet, consectetur adipiscing elit. In non purus in leo fermentum mattis id ut felis. Aenean blandit erat maximus lacus blandit pharetra. Nullam ac finibus elit. Pellentesque dictum lectus non pellentesque posuere. Pellentesque non sagittis nisi. Aliquam sit amet lectus vehicula
+                    div.hide(data-tab="content") 2. Lorem ipsum dolor sit amet, consectetur adipiscing elit. In non purus in leo fermentum mattis id ut felis. Aenean blandit erat maximus lacus blandit pharetra. Nullam ac finibus elit. Pellentesque dictum lectus non pellentesque posuere. Pellentesque non sagittis nisi. Aliquam sit amet lectus vehicula
+                    div.hide(data-tab="content") 3. Lorem ipsum dolor sit amet, consectetur adipiscing elit. In non purus in leo fermentum mattis id ut felis. Aenean blandit erat maximus lacus blandit pharetra. Nullam ac finibus elit. Pellentesque dictum lectus non pellentesque posuere. Pellentesque non sagittis nisi. Aliquam sit amet lectus vehicula
+
+    fieldset
+        legend Event: mouseover
+        .demo
+            .ETab
+                ul
+                    li.current(data-tab="item") Tab 1
+                    li(data-tab="item") Tab 2
+                    li(data-tab="item") Tab 3
+                div
+                    div(data-tab="content") 1. Lorem ipsum dolor sit amet, consectetur adipiscing elit. In non purus in leo fermentum mattis id ut felis. Aenean blandit erat maximus lacus blandit pharetra. Nullam ac finibus elit. Pellentesque dictum lectus non pellentesque posuere. Pellentesque non sagittis nisi. Aliquam sit amet lectus vehicula
+                    div.hide(data-tab="content") 2. Lorem ipsum dolor sit amet, consectetur adipiscing elit. In non purus in leo fermentum mattis id ut felis. Aenean blandit erat maximus lacus blandit pharetra. Nullam ac finibus elit. Pellentesque dictum lectus non pellentesque posuere. Pellentesque non sagittis nisi. Aliquam sit amet lectus vehicula
+                    div.hide(data-tab="content") 3. Lorem ipsum dolor sit amet, consectetur adipiscing elit. In non purus in leo fermentum mattis id ut felis. Aenean blandit erat maximus lacus blandit pharetra. Nullam ac finibus elit. Pellentesque dictum lectus non pellentesque posuere. Pellentesque non sagittis nisi. Aliquam sit amet lectus vehicula
+
+    fieldset
+        legend Delay: 200ms
+        .demo
+            .ETab
+                ul
+                    li.current(data-tab="item") Tab 1
+                    li(data-tab="item") Tab 2
+                    li(data-tab="item") Tab 3
+                div
+                    div(data-tab="content") 1. Lorem ipsum dolor sit amet, consectetur adipiscing elit. In non purus in leo fermentum mattis id ut felis. Aenean blandit erat maximus lacus blandit pharetra. Nullam ac finibus elit. Pellentesque dictum lectus non pellentesque posuere. Pellentesque non sagittis nisi. Aliquam sit amet lectus vehicula
+                    div.hide(data-tab="content") 2. Lorem ipsum dolor sit amet, consectetur adipiscing elit. In non purus in leo fermentum mattis id ut felis. Aenean blandit erat maximus lacus blandit pharetra. Nullam ac finibus elit. Pellentesque dictum lectus non pellentesque posuere. Pellentesque non sagittis nisi. Aliquam sit amet lectus vehicula
+                    div.hide(data-tab="content") 3. Lorem ipsum dolor sit amet, consectetur adipiscing elit. In non purus in leo fermentum mattis id ut felis. Aenean blandit erat maximus lacus blandit pharetra. Nullam ac finibus elit. Pellentesque dictum lectus non pellentesque posuere. Pellentesque non sagittis nisi. Aliquam sit amet lectus vehicula
+
+    fieldset
+        legend Nested tab
+        .demo
+            .ETab
+                ul
+                    li.current(data-tab="item") Tab 1
+                    li(data-tab="item") Tab 2
+                    li(data-tab="item") Tab 3
+                div
+                    div(data-tab="content") 1. Lorem ipsum dolor sit amet, consectetur adipiscing elit. In non purus in leo fermentum mattis id ut felis. Aenean blandit erat maximus lacus blandit pharetra. Nullam ac finibus elit. Pellentesque dictum lectus non pellentesque posuere. Pellentesque non sagittis nisi. Aliquam sit amet lectus vehicula
+                    div.hide(data-tab="content")
+                        .sub-ETab
+                            ul
+                                li.current.sub-item Sub Tab 1
+                                li.sub-item Sub Tab 2
+                                li.sub-item Sub Tab 3
+                            div
+                                div.sub-content 1. Lorem ipsum dolor sit amet, consectetur adipiscing elit. In non purus in leo fermentum mattis id ut felis. Aenean blandit erat maximus lacus blandit pharetra. Nullam ac finibus elit. Pellentesque dictum lectus non pellentesque posuere. Pellentesque non sagittis nisi. Aliquam sit amet lectus vehicula
+                                div.sub-content.hide 2. Lorem ipsum dolor sit amet, consectetur adipiscing elit. In non purus in leo fermentum mattis id ut felis. Aenean blandit erat maximus lacus blandit pharetra. Nullam ac finibus elit. Pellentesque dictum lectus non pellentesque posuere. Pellentesque non sagittis nisi. Aliquam sit amet lectus vehicula
+                                div.sub-content.hide 3. Lorem ipsum dolor sit amet, consectetur adipiscing elit. In non purus in leo fermentum mattis id ut felis. Aenean blandit erat maximus lacus blandit pharetra. Nullam ac finibus elit. Pellentesque dictum lectus non pellentesque posuere. Pellentesque non sagittis nisi. Aliquam sit amet lectus vehicula
+                    div.hide(data-tab="content") 3. Lorem ipsum dolor sit amet, consectetur adipiscing elit. In non purus in leo fermentum mattis id ut felis. Aenean blandit erat maximus lacus blandit pharetra. Nullam ac finibus elit. Pellentesque dictum lectus non pellentesque posuere. Pellentesque non sagittis nisi. Aliquam sit amet lectus vehicula
+
+    fieldset
+        legend Lazyload: data-src
+        .demo
+            .ETab
+                ul
+                    li.current(data-tab="item") Tab 1
+                    li(data-tab="item") Tab 2
+                    li(data-tab="item") Tab 3
+                div
+                    div(data-tab="content") 1. Lorem ipsum dolor sit amet, consectetur adipiscing elit. In non purus in leo fermentum mattis id ut felis. Aenean blandit erat maximus lacus blandit pharetra. Nullam ac finibus elit. Pellentesque dictum lectus non pellentesque posuere. Pellentesque non sagittis nisi. Aliquam sit amet lectus vehicula
+                    div.hide(data-tab="content") 2. Lorem ipsum dolor sit amet, consectetur adipiscing elit. In non purus in leo fermentum mattis id ut felis. Aenean blandit erat maximus lacus blandit pharetra. Nullam ac finibus elit. Pellentesque dictum lectus non pellentesque posuere. Pellentesque non sagittis nisi. Aliquam sit amet lectus vehicula
+                        img(data-src="http://img11.360buyimg.com/n5/jfs/t763/346/428954048/81500/2210b539/54af4118N3e0bbfbe.jpg", height="50", width="50")
+                        img(data-src="http://img11.360buyimg.com/n5/jfs/t763/346/428954048/81500/2210b539/54af4118N3e0bbfbe.jpg", height="50", width="50")
+                        img(data-src="http://img11.360buyimg.com/n5/jfs/t763/346/428954048/81500/2210b539/54af4118N3e0bbfbe.jpg", height="50", width="50")
+                    div.hide(data-tab="content") 3. Lorem ipsum dolor sit amet, consectetur adipiscing elit. In non purus in leo fermentum mattis id ut felis. Aenean blandit erat maximus lacus blandit pharetra. Nullam ac finibus elit. Pellentesque dictum lectus non pellentesque posuere. Pellentesque non sagittis nisi. Aliquam sit amet lectus vehicula
+
+
+
+block localScript
+    script.
+        $('.ETab').eq(0).ETab({
+            defaultIndex: 2
+        });
+        $('.ETab').eq(1).ETab({
+            event: 'mouseover'
+        });
+        $('.ETab').eq(2).ETab({
+            event: 'mouseover',
+            delay: 200
+        });
+        $('.ETab').eq(3).ETab({
+            onReady: function() {
+                this.contents.eq(1).ETab({
+                    selector: {
+                        item: '.sub-item',
+                        content: '.sub-content'
+                    }
+                });
+            }
+        });
+        $('.ETab').eq(4).ETab({
+            lazyload: 'data-src'
+        });

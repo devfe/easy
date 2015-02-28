@@ -1,0 +1,43 @@
+body {
+  font-size: 12px;
+  padding: 50px;
+}
+
+ul,ol {
+    padding: 0;
+}
+
+/* base */
+.hide {
+    display: none;
+}
+
+fieldset {
+    width: 300px;
+    float: left;
+    margin: 0 20px 20px 0;
+}
+
+/* -ETab */
+.ETab {
+    li {
+        background: #eee;
+        padding: 5px 15px;
+        display: inline-block;
+        *zoom: 1;
+    }
+    .current {
+        background: #333;
+        color: #fff;
+    }
+}
+
+/*-ELazyload */
+.ELazyload {
+    .img-list {
+        float: left;
+        margin-left: 30px;
+        margin-bottom: 10px;
+        border:1px solid #000;
+    }
+}

@@ -1,0 +1,21 @@
+extends ../assets/layout
+
+block style
+    link(type="text/css", rel="stylesheet", href="./#{name}.css")
+
+block content
+
+    fieldset
+        legend Normal
+        .demo
+            .ELazyload
+                each img in imgs
+                    .img-list
+                        img(width="100", height="100", data-src="#{img}")
+
+
+block localScript
+    script.
+        $('.ELazyload').ELazyload({
+            debug: true
+        });

@@ -1,0 +1,14 @@
+doctype html
+html
+  head
+    title #{name} - #{version}
+    link(rel='stylesheet', type='text/css' href='../assets/plugins.css')
+
+    block style
+
+  body
+    block content
+
+    script(src='../assets/jquery-1.6.4.js')
+    script(src='./#{name}.js')
+    block localScript
