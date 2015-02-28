@@ -96,7 +96,7 @@
 
         close: function($ele) {
             $ele.removeClass(this.settings.current)
-            .removeData('open', true);
+            .removeData('open');
             this.settings.onClose.call(this, $ele);
         }
     };
