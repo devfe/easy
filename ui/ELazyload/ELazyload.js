@@ -14,8 +14,6 @@
     // 插件版本
     var EPluginVersion = '@VERSION';
 
-    var EpluginGuid = 0;
-
     var emptyFunction = function() {};
 
     // 插件参数默认值
@@ -180,7 +178,7 @@
 
                 // 加载非图片隐藏模块更改检查元素引用
                 var $targetToCheck = _this.$holder || $this;
-                
+
                 if ( _this.inWindow($targetToCheck) ) {
                     load( $this );
                 } else {
@@ -237,10 +235,10 @@
         }
     };
 
+    // 多组件初始化防止事件namespace冲突
     $.fn[EPluginName + '_guid'] = 0;
-    $.fn[EPluginName] = function (options) {
-        // 多组件初始化防止事件namespace冲突
 
+    $.fn[EPluginName] = function (options) {
         if ( !this.length ) {
             console.error('The elements['+ this.selector +'] you passed is empty.');
             return this;

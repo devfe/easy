@@ -1,0 +1,70 @@
+extends ../assets/layout
+
+block style
+  link(type="text/css", rel="stylesheet", href="./#{name}.css")
+
+block content
+
+  fieldset
+    legend Normal
+    .demo
+      .EDropdown
+        .EDropdown-hd(data-drop="head") 下拉菜单1
+          b ▼
+        ul.EDropdown-bd.hide(data-drop="content")
+          li 子菜单项目1
+          li 子菜单项目2
+          li 子菜单项目3
+
+  fieldset
+    legend Event: click
+    .demo
+      .EDropdown
+        .EDropdown-hd(data-drop="head") 下拉菜单2
+          b ▼
+        ul.EDropdown-bd.hide(data-drop="content")
+          li 子菜单项目1
+          li 子菜单项目2
+          li 子菜单项目3
+
+  fieldset
+    legend Event: click, autoClose: true
+    .demo
+      .EDropdown
+        .EDropdown-hd(data-drop="head") 下拉菜单3
+          b ▼
+        ul.EDropdown-bd.hide(data-drop="content")
+          li 子菜单项目1
+          li 子菜单项目2
+          li 子菜单项目3
+
+
+block localScript
+  script.
+    $('.EDropdown').eq(0).EDropdown({
+      onOpen: function() {
+        this.$el.find('b').html('▲');
+      },
+      onClose: function() {
+        this.$el.find('b').html('▼');
+      },
+    });
+    $('.EDropdown').eq(1).EDropdown({
+      event: 'click',
+      onOpen: function() {
+        this.$el.find('b').html('▲');
+      },
+      onClose: function() {
+        this.$el.find('b').html('▼');
+      },
+    });
+    $('.EDropdown').eq(2).EDropdown({
+      event: 'click',
+      autoClose: true,
+      onOpen: function() {
+        this.$el.find('b').html('▲');
+      },
+      onClose: function() {
+        this.$el.find('b').html('▼');
+      },
+    });
