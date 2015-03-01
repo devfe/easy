@@ -30,6 +30,7 @@ gulp.task('compile_jade', function() {
 
     function compileJade(jadePath, data) {
         data.imgs = testData.imgs;
+        data.sliders = testData.sliders;
         gulp.src(jadePath)
             .pipe(jade({
                 locals: data,

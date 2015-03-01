@@ -14,6 +14,10 @@ ul,ol {
 }
 
 /* base */
+.ac {
+    margin-left: auto;
+    margin-right: auto;
+}
 .hide {
     display: none;
 }
@@ -22,6 +26,9 @@ fieldset {
     width: 300px;
     float: left;
     margin: 0 20px 20px 0;
+}
+fieldset.bigger {
+    width: 670px;
 }
 
 .demo {
@@ -75,3 +82,5 @@ fieldset {
 .active .EDropdown-bd {
     display: block;
 }
+
+/* -ESlider */

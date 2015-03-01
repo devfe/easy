@@ -22,8 +22,8 @@
         current      : 'current',
         lazyload     : null,
         selector     : {
-            item     : '[data-tab="item"]',
-            content  : '[data-tab="content"]'
+            trigger  : '[data-tab="trigger"]',
+            item     : '[data-tab="item"]'
         },
         onReady      : function() {},
         onSwitch     : function() {}
@@ -44,10 +44,10 @@
 
     ETab.prototype = {
         init: function() {
+            this.triggers = this.$el.find(this.settings.selector.trigger);
             this.items    = this.$el.find(this.settings.selector.item);
-            this.contents = this.$el.find(this.settings.selector.content);
 
-            if ( this.items.length !== this.contents.length ) {
+            if ( this.triggers.length !== this.items.length ) {
                 throw new Error('The tab item count must equals to tab content count.');
             } else {
                 this.bindEvent();
@@ -58,7 +58,7 @@
                 *  修改产生的闪动。
                 */
                 if ( typeof this.settings.defaultIndex === 'number' ) {
-                    this.items.eq(this.settings.defaultIndex).trigger(this.settings.event);
+                    this.triggers.eq(this.settings.defaultIndex).trigger(this.settings.event);
                 }
 
                 this.settings.onReady.call(this, this.settings.defaultIndex);
@@ -74,13 +74,13 @@
             var _this = this;
 
             this.$el.undelegate(this.settings.event)
-            .delegate(this.settings.selector.item, this.settings.event, function() {
+            .delegate(this.settings.selector.trigger, this.settings.event, function() {
                 _this.handleEvent( $(this) );
             });
 
             if ( /mouseover|mouseenter/.test(this.settings.event) ) {
                 this.$el.undelegate('mouseout mouseleave')
-                .delegate(this.settings.selector.item, 'mouseout mouseleave', function() {
+                .delegate(this.settings.selector.trigger, 'mouseout mouseleave', function() {
                     clearTimeout(_this.timer);
                 });
             }
@@ -88,7 +88,7 @@
 
         handleEvent: function($target) {
             var _this = this;
-            var index = this.items.index($target);
+            var index = this.triggers.index($target);
 
             clearTimeout(this.timer);
             this.timer = setTimeout(function() {
@@ -97,13 +97,13 @@
         },
 
         go: function(n) {
-            this.items.removeClass(this.settings.current).eq(n).addClass(this.settings.current);
-            this.contents.hide().eq(n).show();
+            this.triggers.removeClass(this.settings.current).eq(n).addClass(this.settings.current);
+            this.items.hide().eq(n).show();
 
             this.settings.onSwitch.call(this, n);
 
             if ( this.settings.lazyload ) {
-                this.loadImages(this.contents.eq(n));
+                this.loadImages(this.items.eq(n));
             }
         },
         loadImages: function($el) {
