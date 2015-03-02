@@ -1,5 +1,5 @@
 /* ------------------------------------------------------------------------
- * @Name: ESlider
+ * @Name: ESlide
  * @Author: keelii
  * @Version: 1.0.0
  * ------------------------------------------------------------------------
@@ -8,8 +8,8 @@
 
 (function ($, window, document) {
     'use strict';
-    // 插件名称：新建插件全局替换字符ESlider即可
-    var EPluginName = 'ESlider';
+    // 插件名称：新建插件全局替换字符ESlide即可
+    var EPluginName = 'ESlide';
 
     // 插件版本
     var EPluginVersion = '@VERSION';
@@ -28,15 +28,15 @@
         current      : 'current',
         lazyload     : null,
         selector     : {
-            trigger  : '[data-slider="trigger"]',
-            item     : '[data-slider="item"]',
-            pager    : '[data-slider="prev"],[data-slider="next"]',
+            trigger  : '[data-slide="trigger"]',
+            item     : '[data-slide="item"]',
+            pager    : '[data-slide="prev"],[data-slide="next"]'
         },
         onReady      : function() {},
         onSwitch     : function() {}
     };
 
-    function ESlider($element, options) {
+    function ESlide($element, options) {
         this.$el = $element;
 
         this.settings = $.extend({}, defaults, options);
@@ -47,7 +47,7 @@
         this.init();
     }
 
-    ESlider.prototype = {
+    ESlide.prototype = {
         init: function() {
             this.triggers = this.$el.find(this.settings.selector.trigger);
             this.items    = this.$el.find(this.settings.selector.item);
@@ -55,15 +55,17 @@
             this.interval = null;
 
             this.length   = this.items.length;
+
+            // 焦点图切换当前下标
             this.current  = this.settings.defaultIndex || 0;
 
             if ( this.triggers.length !== this.items.length ) {
-                throw new Error('The tab item count must equals to tab content count.');
+                throw new Error('The slide item count must equals to trigger count.');
             } else {
                 this.bindEvent();
 
                 /*
-                *  默认情况下不触发当前Slider事件, 一般情况下Slider组件的默认属性
+                *  默认情况下不触发当前slide事件, 一般情况下slide组件的默认属性
                 *  比如高亮class和内容的显示与否由后端同步输出到页面,避免js
                 *  修改产生的闪动。
                 */
@@ -109,7 +111,7 @@
             if ( this.settings.pager ) {
                 this.$el.undelegate('click')
                 .delegate(pagerSelector, 'click', function() {
-                    var isNext = $(this).attr('data-slider') === 'next';
+                    var isNext = $(this).attr('data-slide') === 'next';
                     if ( isNext ) {
                         _this.setCurrent(++_this.current);
                     } else {
@@ -209,7 +211,7 @@
             return this.each(function () {
                 $(this).data('Eguid', $.fn[EPluginName + '_guid']++);
 
-                var EPluginInstance = new ESlider($(this), options);
+                var EPluginInstance = new ESlide($(this), options);
 
                 if ( !$(this).data(EPluginName) ) {
                     $(this).data(EPluginName, EPluginInstance);

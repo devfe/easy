@@ -1,14 +1,14 @@
-.ESlider {
+.ESlide {
   position: relative; }
 
-.ESlider:hover .prev, .ESlider:hover .next {
+.ESlide:hover .prev, .ESlide:hover .next {
   visibility: visible; }
 
-.ESlider-items .current {
+.ESlide-items .current {
   opacity: 1;
   z-index: 2; }
 
-.ESlider-item {
+.ESlide-item {
   position: absolute;
   opacity: 0;
   transition: opacity 1s ease;
@@ -16,7 +16,7 @@
   -moz-transition: opacity 1s ease;
   -o-transition: opacity 1s ease; }
 
-.ESlider-trigger {
+.ESlide-trigger {
   width: 22px;
   height: 22px;
   line-height: 22px;
@@ -28,17 +28,17 @@
   color: #fff;
   border-radius: 12px; }
 
-.ESlider-triggers {
+.ESlide-triggers {
   position: absolute;
   z-index: 3;
   right: 10px;
   bottom: 10px; }
-  .ESlider-triggers .current {
+  .ESlide-triggers .current {
     background: #E4393C; }
 
-.ESlider-pager {
+.ESlide-pager {
   width: 100%; }
-  .ESlider-pager .prev, .ESlider-pager .next {
+  .ESlide-pager .prev, .ESlide-pager .next {
     position: absolute;
     z-index: 4;
     top: 50%;
@@ -51,9 +51,9 @@
     background: rgba(0, 0, 0, 0.2);
     color: #fff;
     font: 14px/62px simsun; }
-  .ESlider-pager .prev {
+  .ESlide-pager .prev {
     margin-top: -31px;
     left: 0; }
-  .ESlider-pager .next {
+  .ESlide-pager .next {
     margin-top: -31px;
     right: 0; }

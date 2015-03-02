@@ -1,0 +1,56 @@
+extends ../assets/layout
+
+block style
+  link(type="text/css", rel="stylesheet", href="./#{name}.css")
+
+block content
+
+  fieldset.bigger.ac
+    legend Normal
+    .demo
+      .ESlide(style="height:240px")
+        ul.ESlide-items
+          each slide,key in slides
+            - var cName = key == 0 ? 'ESlide-item current' : 'ESlide-item'
+            li(data-slide="item", class="#{cName}")
+              a(href="#none")
+                img(src="#{slide}", width="670", height="240", alt="")
+        .ESlide-triggers
+          each slide,key in slides
+            - var cName = key == 0 ? 'ESlide-trigger current' : 'ESlide-trigger'
+            span(data-slide="trigger", class="#{cName}") #{key+1}
+        .ESlide-pager
+          a(href="#none", data-slide="prev", class="prev") &lt;
+          a(href="#none", data-slide="next", class="next") &gt;
+
+  fieldset.bigger.ac
+    legend DefaultIndex: 3
+    .demo
+      .ESlide(style="height:240px")
+        ul.ESlide-items
+          each slide,key in slides
+            - var cName = key == 0 ? 'ESlide-item current' : 'ESlide-item'
+            li(data-slide="item", class="#{cName}")
+              a(href="#none")
+                img(src="#{slide}", width="670", height="240", alt="")
+        .ESlide-triggers
+          each slide,key in slides
+            - var cName = key == 0 ? 'ESlide-trigger current' : 'ESlide-trigger'
+            span(data-slide="trigger", class="#{cName}") #{key+1}
+        .ESlide-pager
+          a(href="#none", data-slide="prev", class="prev") &lt;
+          a(href="#none", data-slide="next", class="next") &gt;
+
+block localScript
+  script.
+    $('.ESlide').eq(0).ESlide({
+      interval: 1000,
+      debug: true,
+      pager: true,
+      onHoverStop: false
+    });
+    $('.ESlide').eq(1).ESlide({
+      interval: 1000,
+      pager: true,
+      defaultIndex: 3
+    });
