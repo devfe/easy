@@ -19,12 +19,16 @@ block content
           each slider,key in sliders
             - var cName = key == 0 ? 'ESlider-trigger current' : 'ESlider-trigger'
             span(data-slider="trigger", class="#{cName}") #{key+1}
+        .ESlider-pager
+          a(href="#none", data-slider="prev", class="prev") &lt;
+          a(href="#none", data-slider="next", class="next") &gt;
 
 
 block localScript
   script.
     $('.ESlider').ESlider({
-        interval: 1000,
-        debug: true,
-        onHoverStop: true
+      interval: 1000,
+      debug: true,
+      pager: true,
+      onHoverStop: false
     });

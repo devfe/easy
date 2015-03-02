@@ -19,16 +19,18 @@
     // 插件参数默认值
     var defaults = {
         debug        : false,
-        interval     : 5000,
         event        : 'mouseover',
         onHoverStop  : false,
         delay        : 0,
+        interval     : 5000,
+        pager        : false,
         defaultIndex : null,
         current      : 'current',
         lazyload     : null,
         selector     : {
             trigger  : '[data-slider="trigger"]',
-            item     : '[data-slider="item"]'
+            item     : '[data-slider="item"]',
+            pager    : '[data-slider="prev"],[data-slider="next"]',
         },
         onReady      : function() {},
         onSwitch     : function() {}
@@ -37,7 +39,7 @@
     function ESlider($element, options) {
         this.$el = $element;
 
-        this.settings = $.extend({}, defaults, options) ;
+        this.settings = $.extend({}, defaults, options);
 
         this._defaults = defaults;
         this._name = EPluginName;
@@ -84,19 +86,45 @@
         },
 
         bindEvent: function() {
-            var _this = this;
+            var _this           = this;
+            var itemSelector    = this.settings.selector.item;
+            var triggerSelector = this.settings.selector.trigger;
+            var pagerSelector   = this.settings.selector.pager;
+            var stopSelector    = triggerSelector + ',' + pagerSelector;
 
             this.$el.undelegate(this.settings.event)
             .delegate(this.settings.selector.trigger, this.settings.event, function() {
                 _this.handleEvent( $(this) );
             });
 
+            // 按钮鼠标hover暂停播放
+            this.$el.undelegate('mouseover mouseout')
+            .delegate(stopSelector, 'mouseover', function() {
+                _this.stop();
+            })
+            .delegate(stopSelector, 'mouseout', function() {
+                _this.start();
+            });
+
+            if ( this.settings.pager ) {
+                this.$el.undelegate('click')
+                .delegate(pagerSelector, 'click', function() {
+                    var isNext = $(this).attr('data-slider') === 'next';
+                    if ( isNext ) {
+                        _this.setCurrent(++_this.current);
+                    } else {
+                        _this.setCurrent(--_this.current);
+                    }
+                });
+            }
+
+            // 焦点图内容鼠标hover暂停播放
             if ( this.settings.onHoverStop ) {
                 this.$el.undelegate('mouseover mouseout')
-                .delegate(this.settings.selector.item, 'mouseover', function() {
+                .delegate(itemSelector, 'mouseover', function() {
                     _this.stop();
                 })
-                .delegate(this.settings.selector.item, 'mouseout', function() {
+                .delegate(itemSelector, 'mouseout', function() {
                     _this.start();
                 });
             }
@@ -112,6 +140,19 @@
             }, this.settings.delay);
         },
 
+        // 计算当前翻页下标关系决定最终去向
+        setCurrent: function(index) {
+            if ( index + 1 > this.length ) {
+                this.current = 0;
+            } else if ( index < 0 ) {
+                this.current = this.length - 1;
+            } else {
+                this.current = index;
+            }
+
+            this.go(this.current);
+        },
+
         go: function(n) {
             this.triggers.removeClass(this.settings.current).eq(n).addClass(this.settings.current);
             this.items.removeClass(this.settings.current).eq(n).addClass(this.settings.current);
@@ -121,19 +162,15 @@
             if ( this.settings.lazyload ) {
                 this.loadImages(this.items.eq(n));
             }
+
+            this.current = n;
         },
 
         start: function() {
             var _this = this;
 
             this.interval = setInterval(function() {
-                if ( _this.current + 1 >= _this.length ) {
-                    _this.current = 0;
-                } else {
-                    _this.current++;
-                }
-
-                _this.go(_this.current);
+                _this.setCurrent(++_this.current);
 
                 if ( _this.settings.debug ) {
                     console.log('Total: ' + _this.length + ' Current: ' + _this.current);
