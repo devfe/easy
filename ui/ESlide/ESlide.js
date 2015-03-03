@@ -85,17 +85,22 @@
             if ( this.settings.interval ) {
                 this.start();
             }
+
+            // 是否使用css3动画切换
+            this._supportCSS3Transition = this.support('opacity') && this.support('transition');
         },
 
         bindEvent: function() {
             var _this           = this;
-            var itemSelector    = this.settings.selector.item;
-            var triggerSelector = this.settings.selector.trigger;
-            var pagerSelector   = this.settings.selector.pager;
+            var event           = this.settings.event;
+            var selectors       = _this.settings.selector;
+            var itemSelector    = selectors.item;
+            var triggerSelector = selectors.trigger;
+            var pagerSelector   = selectors.pager;
             var stopSelector    = triggerSelector + ',' + pagerSelector;
 
-            this.$el.undelegate(this.settings.event)
-            .delegate(this.settings.selector.trigger, this.settings.event, function() {
+            this.$el.undelegate(event)
+            .delegate(triggerSelector, event, function() {
                 _this.handleEvent( $(this) );
             });
 
@@ -138,7 +143,7 @@
 
             clearTimeout(this.timer);
             this.timer = setTimeout(function() {
-                _this.go(index);
+                _this.setCurrent(index);
             }, this.settings.delay);
         },
 
@@ -155,17 +160,35 @@
             this.go(this.current);
         },
 
+        // 是否支持css3属性
+        support: function(styleKey) {
+            var div = document.createElement('div');
+            var support = div.style[styleKey] != undefined;
+
+            div = null;
+
+            return support;
+        },
+
+        // 切换到第n页
         go: function(n) {
-            this.triggers.removeClass(this.settings.current).eq(n).addClass(this.settings.current);
-            this.items.removeClass(this.settings.current).eq(n).addClass(this.settings.current);
+            this.triggers.removeClass(this.settings.current)
+            .eq(n).addClass(this.settings.current);
+
+            this.items.removeClass(this.settings.current)
+            .eq(n).addClass(this.settings.current);
+
+            if ( !this._supportCSS3Transition ) {
+                this.items.fadeOut()
+                .eq(n).fadeIn();
+            }
+
 
             this.settings.onSwitch.call(this, n);
 
             if ( this.settings.lazyload ) {
                 this.loadImages(this.items.eq(n));
             }
-
-            this.current = n;
         },
 
         start: function() {
