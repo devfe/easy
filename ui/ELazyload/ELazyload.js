@@ -18,7 +18,7 @@
 
     // 插件参数默认值
     var defaults = {
-        // 在很多浏览器中setTimeout/setInterval的最小值都限制为10ms ?
+        // 在很多浏览器中setTimeout/setInterval的最小值都限制为10ms
         // ref: https://twitter.com/nwind/status/182758869951463425
         // ref: http://blog.csdn.net/aimingoo/article/details/1451556
         delay: 50,
@@ -54,7 +54,7 @@
     ELazyload.prototype = {
         init: function() {
             if ( this.settings.type === 'img' ) {
-                this.$targets = this.$el.eq(0).is( $('img') )
+                this.$targets = this.$el.eq(0).is('img')
                     ? this.$el
                     : this.$el.find('['+ this.settings.source +']');
             } else {
@@ -91,7 +91,7 @@
             function supportDataURI(fn) {
                 var data = new Image();
                 data.onload = data.onerror = function(){
-                    fn(this.width == 1 && this.height == 1 ? 1 : 0);
+                    fn(this.width === 1 && this.height === 1 ? 1 : 0);
                 };
                 data.src = _this.settings.placeholder[1];
             }

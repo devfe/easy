@@ -29,5 +29,16 @@
     "js"
   ],
   "author": "keelii",
-  "license": "MIT"
+  "license": "MIT",
+
+  "jshintConfig": {
+    "globalstrict": true,
+    "forin": true,
+    "jquery": true,
+    "unused": true,
+    "undef": true,
+    "debug": false,
+    "lastsemic": true,
+    "predef": ["EPluginVersion"]
+  }
 }

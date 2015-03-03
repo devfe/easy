@@ -32,8 +32,8 @@
             item     : '[data-slide="item"]',
             pager    : '[data-slide="prev"],[data-slide="next"]'
         },
-        onReady      : function() {},
-        onSwitch     : function() {}
+        onReady      : emptyFunction,
+        onSwitch     : emptyFunction
     };
 
     function ESlide($element, options) {
@@ -163,7 +163,7 @@
         // 是否支持css3属性
         support: function(styleKey) {
             var div = document.createElement('div');
-            var support = div.style[styleKey] != undefined;
+            var support = div.style[styleKey] !== undefined;
 
             div = null;
 
