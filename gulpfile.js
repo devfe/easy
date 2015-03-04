@@ -19,8 +19,35 @@ var jade = require('gulp-jade');
 // test images
 var testData = require('./test/data');
 
-var version = '1.0.0';
-var dir = {
+var BASE_VERSION = '1.0.0';
+
+var UI_CONFIG_LIST = [{
+    name: 'EDropdown',
+    version: '1.0.0',
+    hasCSS: false
+},{
+    name: 'ELazyload',
+    version: '1.0.0',
+    hasCSS: false
+},{
+    name: 'ESlide',
+    version: '1.0.0',
+    hasCSS: true
+},{
+    name: 'ETab',
+    version: '1.0.0',
+    hasCSS: false
+},{
+    name: 'EModal',
+    version: '1.0.0',
+    hasCSS: true
+},{
+    name: 'ETips',
+    version: '1.0.0',
+    hasCSS: true
+}];
+
+var DIR = {
     ui: './ui',
     assets: './ui/assets',
     scss: './ui/*/*.scss',
@@ -29,20 +56,78 @@ var dir = {
     jade2watch: './ui/*/*.jade',
 
     build: {
-        ui: 'build/easy/ui/1.0.0/',
-        base: 'build/easy/base/1.0.0',
-        combo: 'build/easy/lib/1.0.0'
+        combo : 'build/E/1.0.0',
+        ui    : 'build/E/ui/1.0.0/',
+        biz   : 'build/E/biz/1.0.0/',
+        base  : 'build/E/base/1.0.0'
     }
 };
 
+
+gulp.task('rebuild_dir', function() {
+    var configContent = '';
+    var jsContent = fs.readFileSync(path.join(DIR.assets, 'template.js'), 'utf8');
+    var cssContent = '';
+    var readmeContent = '';
+
+    function writeFile (filename, content) {
+        fs.writeFile(filename, content, 'utf-8', function(err) {
+            if (err) {
+                console.error('=> File write failed: ' + err);
+            } else {
+                console.log('==> Created success. [' + filename + '].');
+            }
+        });
+    }
+
+    function loopCheckFile (dir, ui) {
+        var configFile = dir + '/' + 'config.json';
+        var jsFile     = dir + '/' + ui.name + '.js';
+        var cssFile    = dir + '/' + ui.name + '.scss';
+        var readmeFile = dir + '/README.md';
+
+        if ( !fs.existsSync(configFile) ) {
+            configContent = JSON.stringify(ui, null, '    ');
+
+            writeFile(configFile, configContent);
+        }
+        if ( !fs.existsSync(jsFile) ) {
+            writeFile(jsFile, jsContent);
+        }
+        if ( !fs.existsSync(cssFile) && ui.hasCSS ) {
+            writeFile(cssFile, cssContent);
+        }
+        if ( !fs.existsSync(readmeFile) ) {
+            readmeContent = '#' + ui.name + '@' + ui.version;
+            writeFile(readmeFile, readmeContent);
+        }
+    }
+
+    function loopCheckDir (ui) {
+        var dirname    = path.join(DIR.ui, ui.name);
+
+        var dirExists  = fs.existsSync(dirname);
+
+        if ( !dirExists ) {
+            fs.mkdirSync(dirname);
+        }
+
+        loopCheckFile(dirname, ui);
+    }
+
+    UI_CONFIG_LIST.forEach(function(item) {
+        loopCheckDir(item);
+    });
+});
+
 gulp.task('compress_js', function() {
-    gulp.src(dir.script)
+    gulp.src(DIR.script)
       .pipe(uglify())
-      .pipe(gulp.dest(dir.build.ui))
+      .pipe(gulp.dest(DIR.build.ui))
 });
 
 gulp.task('compile_jade', function() {
-    var dirs = fs.readdirSync(dir.ui);
+    var dirs = fs.readdirSync(DIR.ui);
 
     function compileJade(jadePath, data) {
         data.imgs = testData.imgs;
@@ -52,12 +137,12 @@ gulp.task('compile_jade', function() {
                 locals: data,
                 pretty: true
             }))
-            .pipe(gulp.dest(path.join(dir.ui, data.name)))
+            .pipe(gulp.dest(path.join(DIR.ui, data.name)))
     }
 
     dirs.forEach(function(file) {
-        var configFilePath = path.join(dir.ui, file, 'config.json');
-        var jadeFilePath = path.join(dir.ui, file, 'index.jade');
+        var configFilePath = path.join(DIR.ui, file, 'config.json');
+        var jadeFilePath = path.join(DIR.ui, file, 'index.jade');
 
         if (/^E/.test(file) && fs.existsSync(configFilePath) && fs.existsSync(jadeFilePath)) {
             var config = require('./' + configFilePath);
@@ -70,9 +155,9 @@ gulp.task('compile_jade', function() {
 });
 
 gulp.task('compile_sass', function() {
-    gulp.src(dir.scss)
+    gulp.src(DIR.scss)
         .pipe(sass())
-        .pipe(gulp.dest(dir.ui));
+        .pipe(gulp.dest(DIR.ui));
 });
 
 // lint 单个文件
@@ -87,21 +172,21 @@ gulp.task('lint', function() {
 
 
 gulp.task('default', function() {
-    gulp.src(dir.script)
+    gulp.src(DIR.script)
         .pipe(jshint())
         .pipe(jshint.reporter('default'));
 });
 
 gulp.task('watch', function() {
-    gulp.watch(dir.jade2watch, ['compile_jade']);
+    gulp.watch(DIR.jade2watch, ['compile_jade']);
 
-    gulp.watch(dir.scss, ['compile_sass']);
+    gulp.watch(DIR.scss, ['compile_sass']);
 });
 
 gulp.task('server', function() {
     connect.server({
         port: 1024,
-        root: dir.ui,
+        root: DIR.ui,
         livereload: false
     });
 });
