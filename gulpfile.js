@@ -3,18 +3,22 @@ var path = require('path');
 
 var gulp = require('gulp');
 
+// local server
 var connect = require('gulp-connect');
 
+// compile
+var jade = require('gulp-jade');
 var sass = require('gulp-sass');
+var uglify = require('gulp-uglify');
+
+// build
+var concat = require('gulp-concat');
+var rename = require('gulp-rename');
+
+// check
 var jshint = require('gulp-jshint');
 var packageJSON  = require('./package');
 var jshintConfig = packageJSON.jshintConfig;
-
-var concat = require('gulp-concat');
-var uglify = require('gulp-uglify');
-var rename = require('gulp-rename');
-
-var jade = require('gulp-jade');
 
 // test images
 var testData = require('./test/data');
@@ -168,8 +172,6 @@ gulp.task('lint', function() {
         .pipe(jshint(jshintConfig))
         .pipe(jshint.reporter('default'));
 });
-
-
 
 gulp.task('default', function() {
     gulp.src(DIR.script)
