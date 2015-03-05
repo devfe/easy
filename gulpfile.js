@@ -1,4 +1,4 @@
-var fs = require('fs');
+var fs   = require('fs');
 var path = require('path');
 
 var gulp = require('gulp');
@@ -7,21 +7,21 @@ var gulp = require('gulp');
 var connect = require('gulp-connect');
 
 // compile
-var jade = require('gulp-jade');
-var sass = require('gulp-sass');
-var uglify = require('gulp-uglify');
+var jade    = require('gulp-jade');
+var sass    = require('gulp-sass');
+var uglify  = require('gulp-uglify');
 
 // build
-var concat = require('gulp-concat');
-var rename = require('gulp-rename');
+var concat  = require('gulp-concat');
+var rename  = require('gulp-rename');
 
 // check
-var jshint = require('gulp-jshint');
+var jshint       = require('gulp-jshint');
 var packageJSON  = require('./package');
 var jshintConfig = packageJSON.jshintConfig;
 
 // test images
-var testData = require('./test/data');
+var testData     = require('./test/data');
 
 var BASE_VERSION = '1.0.0';
 
@@ -46,18 +46,22 @@ var UI_CONFIG_LIST = [{
     version: '1.0.0',
     hasCSS: true
 },{
+    name: 'ECarousel',
+    version: '',
+    hasCSS: true
+},{
     name: 'ETips',
     version: '1.0.0',
-    hasCSS: true
+    hasCSS: false
 }];
 
 var DIR = {
-    ui: './ui',
-    assets: './ui/assets',
-    scss: './ui/*/*.scss',
-    script: ['./ui/*/*.js', '!./ui/assets/*.js'],
+    ui         : './ui',
+    assets     : './ui/assets',
+    scss       : './ui/*/*.scss',
+    script     : ['./ui/*/*.js', '!./ui/assets/*.js'],
 
-    jade2watch: './ui/*/*.jade',
+    jade2watch : './ui/*/*.jade',
 
     build: {
         combo : 'build/E/1.0.0',
@@ -70,6 +74,7 @@ var DIR = {
 
 gulp.task('rebuild_dir', function() {
     var configContent = '';
+    var jadeContent = fs.readFileSync(path.join(DIR.assets, 'template.jade'), 'utf8');
     var jsContent = fs.readFileSync(path.join(DIR.assets, 'template.js'), 'utf8');
     var cssContent = '';
     var readmeContent = '';
@@ -85,15 +90,19 @@ gulp.task('rebuild_dir', function() {
     }
 
     function loopCheckFile (dir, ui) {
-        var configFile = dir + '/' + 'config.json';
-        var jsFile     = dir + '/' + ui.name + '.js';
-        var cssFile    = dir + '/' + ui.name + '.scss';
-        var readmeFile = dir + '/README.md';
+        var configFile = path.join(dir, 'config.json');
+        var jadeFile   = path.join(dir, 'index.jade');
+        var jsFile     = path.join(dir, ui.name + '.js');
+        var cssFile    = path.join(dir, ui.name + '.scss');
+        var readmeFile = path.join(dir, '/README.md');
 
         if ( !fs.existsSync(configFile) ) {
             configContent = JSON.stringify(ui, null, '    ');
 
             writeFile(configFile, configContent);
+        }
+        if ( !fs.existsSync(jadeFile) ) {
+            writeFile(jadeFile, jadeContent);
         }
         if ( !fs.existsSync(jsFile) ) {
             writeFile(jsFile, jsContent);
