@@ -20,12 +20,14 @@
     var defaults = {
         event: 'mouseenter',
         trigger: null,
-        current: 'active',
+        current: 'current',
         autoClose: false,
+        delay: 100,
         head: '[data-drop="head"]',
-        content: '[data-drop="content"]',
+        // 用于菜单内容在外部的情况「触发点与内容层无html嵌套关系」
+        content: null,
         onOpen: emptyFunction,
-        onClose: emptyFunction
+        onTrigger: emptyFunction
     };
 
     function EDropdown($element, options) {
@@ -42,6 +44,9 @@
     EDropdown.prototype = {
         init: function() {
             this.$el.attr('data-role', 'drop');
+            this.isMouseEvt =  /mouse/.test(this.settings.event);
+
+            this.timer = null;
 
             if ( this.settings.event === 'click' && !this.settings.autoClose ) {
                 this.settings.trigger = this.$el.find(this.settings.head);
@@ -51,25 +56,43 @@
                 ? this.$el.find(this.settings.trigger)
                 : this.$el;
 
-
             this.bindEvent();
         },
 
         bindEvent: function() {
             var _this = this;
+            var enterEvent = 'mouseenter';
+            var exitEvent  = 'mouseleave';
 
-            if ( /mouse/.test(this.settings.event) ) {
+            if ( this.isMouseEvt ) {
                 this.$triggers.each(function() {
                     var $this = $(this);
 
-                    $this.unbind('mouseenter')
-                    .bind('mouseenter', function() {
-                        _this.open( $(this) );
+                    $this.unbind(enterEvent)
+                    .bind(enterEvent, function() {
+                        _this.handleEvent( $(this), false );
                     })
-                    .bind('mouseleave', function() {
-                        _this.close( $(this) );
+                    .bind(exitEvent, function() {
+                        _this.handleEvent( $(this), true );
                     });
                 });
+
+                if (this.settings.content) {
+                    var eventTrigger = [
+                        this.settings.event,
+                        EPluginName,
+                        $.fn[EPluginName + '_guid']
+                    ].join('.');
+
+                    $(document).undelegate(eventTrigger)
+                    .delegate(this.settings.content, eventTrigger, function() {
+                        clearTimeout(_this.timer);
+                    });
+                    $(document).undelegate(exitEvent)
+                    .delegate(this.settings.content, exitEvent, function() {
+                        _this.handleEvent( $(this), true );
+                    });
+                }
             } else {
                 this.$triggers.unbind('click')
                 .bind('click', function() {
@@ -78,26 +101,57 @@
                         ? $this
                         : $this.parents('[data-role="drop"]').eq(0);
 
-                    console.log($wrap);
-                    if ( $wrap.data('open') ) {
-                        _this.close( $wrap );
-                    } else {
-                        _this.open( $wrap );
-                    }
+                    _this.trigger($wrap, !!$wrap.data('open'));
                 });
             }
         },
 
-        open: function($ele) {
-            $ele.addClass(this.settings.current)
-            .data('open', true);
-            this.settings.onOpen.call(this, $ele);
+        handleEvent: function($ele, isOpen) {
+            // 收起/关闭的时候不加延迟
+            // this.settings.delay = isOpen ? 0 : this.settings.delay;
+
+            // if ( isOpen ) { clearTimeout(this.timer); }
+            if ( !this.isMouseEvt ) {
+                this.settings.delay = 0;
+            }
+
+            if ( this.settings.content ) {
+                // content元素只能选择一个，如果弹出内容元素在$el外部，反查传入jQuery对象个数，也只能有1个
+                if ( $(this.settings.content).length !== 1
+                    ||  this.$el.length !== 1  ) {
+                    throw new Error('Content & jQuery element should be juse select only one element.');
+                }
+            }
+            this.delay($ele, isOpen);
         },
 
-        close: function($ele) {
-            $ele.removeClass(this.settings.current)
-            .removeData('open');
-            this.settings.onClose.call(this, $ele);
+        delay: function($ele, isOpen) {
+            var _this = this;
+
+            clearTimeout(this.timer);
+            this.timer = setTimeout(function() {
+                _this.trigger($ele, isOpen);
+            }, this.settings.delay);
+        },
+
+        trigger: function($ele, isOpen) {
+            if ( !isOpen ) {
+                $ele.addClass(this.settings.current)
+                .data('open', true);
+
+                if ( this.settings.content ) {
+                    $(this.settings.content).show();
+                }
+            } else {
+                $ele.removeClass(this.settings.current)
+                .removeData('open');
+
+                if ( this.settings.content ) {
+                    $(this.settings.content).hide();
+                }
+            }
+
+            this.settings.onTrigger.call(this, $ele);
         }
     };
 

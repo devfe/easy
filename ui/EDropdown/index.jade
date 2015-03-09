@@ -33,11 +33,49 @@ block content
       .EDropdown
         .EDropdown-hd(data-drop="head") 下拉菜单3
           b ▼
-        ul.EDropdown-bd.hide(data-drop="content")
+        ul.EDropdown-bd.hide
           li 子菜单项目(点击会自动关闭)1
           li 子菜单项目(点击会自动关闭)2
           li 子菜单项目(点击会自动关闭)3
 
+  fieldset
+    legend Event: click
+    .demo
+      .EDropdown
+        .EDropdown-hd(data-drop="head") 下拉菜单2
+          b ▼
+    ul#EDropdown-outer-content.hide
+      li 子菜单项目1
+      li 子菜单项目2
+      li 子菜单项目3
+      
+  fieldset
+    legend Infinit
+    .demo
+      //
+        .EDropdown
+          .EDropdown-hd(data-drop="head") 下拉菜单2
+            b ▼
+    ul#infinit
+      li 
+        a(href="#none") level 1
+        ul
+          li 
+            a(href="#none") level 2
+            ul
+              li 
+                a(href="#none") level 3
+                ul
+                  li 子菜单项目1
+                  li 子菜单项目2
+                  li 子菜单项目3
+              li 子菜单项目1
+              li 子菜单项目2
+              li 子菜单项目3
+          li 子菜单项目1
+          li 子菜单项目2
+          li 子菜单项目3
+      li 子菜单项目1
 
 block localScript
   script.
@@ -61,6 +99,25 @@ block localScript
     $('.EDropdown').eq(2).EDropdown({
       event: 'click',
       autoClose: true,
+      onOpen: function() {
+        this.$el.find('b').html('▲');
+      },
+      onClose: function() {
+        this.$el.find('b').html('▼');
+      },
+    });
+    $('.EDropdown').eq(3).EDropdown({
+      delay: 200,
+      autoClose: true,
+      content: '#EDropdown-outer-content',
+      onOpen: function() {
+        this.$el.find('b').html('▲');
+      },
+      onClose: function() {
+        this.$el.find('b').html('▼');
+      },
+    });
+    $('#infinit li').EDropdown({
       onOpen: function() {
         this.$el.find('b').html('▲');
       },
