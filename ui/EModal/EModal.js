@@ -8,7 +8,7 @@
 
 (function ($, window, document) {
     'use strict';
-    // 插件名称：新建插件全局替换字符Plugins即可
+    // 插件名称：新建插件全局替换字符 Plugins 即可
     var EPluginName = 'Plugins';
 
     // 插件版本
@@ -24,7 +24,7 @@
     function Plugins($element, options) {
         this.$el = $element;
 
-        this.settings = $.extend({}, defaults, options) ;
+        this.settings = $.extend(true, {}, defaults, options) ;
 
         this._defaults = defaults;
         this._name = EPluginName;

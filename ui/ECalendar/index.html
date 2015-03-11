@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ECalendar - 1.0.0</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="../assets/plugins.css">
+    <link type="text/css" rel="stylesheet" href="./ECalendar.css">
+  </head>
+  <body>
+    <div class="nav"><strong><a href="/">Easy UI</a></strong>&nbsp;»</div><br><br>
+    <fieldset>
+      <legend>Normal</legend>
+      <div class="demo">
+        <input type="text" id="ECalendar">
+      </div>
+    </fieldset>
+    <div class="clr"></div>
+    <script src="../assets/jquery-1.6.4.js"></script>
+    <script src="./ECalendar.js"></script>
+    <script>
+      $('#ECalendar').ECalendar({
+          id: 'WTF',
+          weekName: ['日', '一', '二', '三', '四', '五', '六'], 
+          close: true
+      }, function() {
+          console.log(this.current);
+      });
+    </script>
+  </body>
+</html>
