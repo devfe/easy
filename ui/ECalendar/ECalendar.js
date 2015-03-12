@@ -28,18 +28,20 @@
         today: true,
         hoverClass: 'ECal-hover',
         currentDay: 'ECal-active',
-        selector: {
-            trigger: '[data-date]',
-            sYear: '[data-cal="sYear"]',
-            sMonth: '[data-cal="sMonth"]',
-            switcher: '[data-switch]',
-            close: '[data-cal="close"]'
-        },
         close: false,
         curr: new Date(),
+        selector: {
+            trigger : '[data-date]',
+            sYear   : '[data-cal="sYear"]',
+            sMonth  : '[data-cal="sMonth"]',
+            switcher: '[data-switch]',
+            week    : '[data-cal="week"]',
+            body    : '[data-cal="body"]',
+            close   : '[data-cal="close"]'
+        },
         template: {
             trigger: '<span class="ECal-week{WEEK} ECal-date{DATE}" data-date="{DATE}">{DATE}</span>',
-            wrap: '\
+            wrap   : '\
                 <div id="{ID}" class="ECal">\
                     <div class="ECal-change">\
                         <span data-switch="py" class="ECal-switch prev-year"> « </span>\
@@ -53,18 +55,18 @@
                         <span data-switch="nm" class="ECal-switch next-month"> › </span>\
                         <span data-switch="ny" class="ECal-switch next-year"> » </span>\
                     </div>\
-                    <div class="ECal-weeks"></div>\
-                    <div class="ECal-body"></div>\
+                    <div data-cal="week" class="ECal-weeks"></div>\
+                    <div data-cal="body" class="ECal-body"></div>\
                     <div class="ECal-footer">\
                         <span class="ECal-today">今天</span>\
                         <em data-cal="close" class="ECal-close">&times;</em>\
                     </div>\
                 </div>',
-            empty: '<span class="ECal-date">&nbsp;</span>',
-            week: '<span class="ECal-weekname{NUM}">{WNAME}</span>'
+            empty : '<span class="ECal-date">&nbsp;</span>',
+            week  : '<span class="ECal-weekname{NUM}">{WNAME}</span>'
         },
-        onReady: emptyFunction,
-        onChoose: emptyFunction
+        onReady  : emptyFunction,
+        onChoose : emptyFunction
     };
 
     function ECalendar($element, options) {
@@ -126,51 +128,6 @@
             }
 
             this.settings.onReady.call(this);
-        },
-
-        initStyle: function() {
-            var el    = this.$el;
-            var h     = el.outerHeight();
-            var oLeft = el.offset().left;
-            var oTop  = el.offset().top;
-
-            this.$cal.css({
-                top: oTop + h,
-                left: oLeft
-            });
-        },
-
-        formatDate: function(fullDate) {
-            var dateRe = /\d{4}-\d{1,2}-\d{1,2}/;
-            var dateArr;
-            var now;
-
-            if ( typeof fullDate === 'string' ) {
-                if( !dateRe.test(fullDate) ) {
-                    throw new Error('「' + EPluginName + '」 Illegal date string :`' + currTimeString + '`.');
-                } else {
-                    dateArr = fullDate.split('-');
-                    now = new Date(dateArr[0], parseInt(dateArr[1]) - 1, dateArr[2])
-                }
-            } else {
-                now = fullDate;
-            }
-
-            var currYear  = now.getFullYear();
-            var currMonth = now.getMonth() + 1;
-            var currDate  = now.getDate();
-            var currDay   = now.getDay();
-
-            // 当前时间头一天是星期几
-            var firstDay = new Date(currYear, currMonth - 1, 1).getDay();
-
-            return {
-                year: currYear,
-                month: currMonth,
-                date: currDate,
-                day: currDay,
-                firstDay: firstDay
-            };
         },
 
         bindEvent: function() {
@@ -248,6 +205,60 @@
             });
         },
 
+        initStyle: function() {
+            var el    = this.$el;
+            var h     = el.outerHeight();
+            var oLeft = el.offset().left;
+            var oTop  = el.offset().top;
+
+            this.$cal.css({
+                top: oTop + h,
+                left: oLeft
+            });
+        },
+
+        formatDate: function(fullDate) {
+            var dateRe = /\d{4}-\d{1,2}-\d{1,2}/;
+            var dateArr;
+            var now;
+
+            if ( typeof fullDate === 'string' ) {
+                if( !dateRe.test(fullDate) ) {
+                    throw new Error('「' + EPluginName + '」 Illegal date string :`' + currTimeString + '`.');
+                } else {
+                    dateArr = fullDate.split('-');
+                    now = new Date(dateArr[0], parseInt(dateArr[1]) - 1, dateArr[2])
+                }
+            } else {
+                now = fullDate;
+            }
+
+            var currYear  = now.getFullYear();
+            var currMonth = now.getMonth() + 1;
+            var currDate  = now.getDate();
+            var currDay   = now.getDay();
+
+            // 当前时间头一天是星期几
+            var firstDay = new Date(currYear, currMonth - 1, 1).getDay();
+
+            return {
+                year: currYear,
+                month: currMonth,
+                date: currDate,
+                day: currDay,
+                firstDay: firstDay
+            };
+        },
+        isLeapYear: function(year) {
+            return ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0);
+        },
+        outputDate: function (d) {
+            return this.settings.outputFormat
+                    .replace('{Y}', d.year)
+                    .replace('{M}', d.month)
+                    .replace('{D}', d.date);
+        },
+
         show: function() {
             this.$cal.show()
             this.markSelected();
@@ -263,12 +274,13 @@
             var hMonth = this.highLight.month;
             var hDate  = this.highLight.date;
 
-            this.$cal.find(this.settings.selector.trigger).removeClass(this.settings.currentDay);
+            this.$cal.find(this.settings.selector.trigger)
+            .removeClass(this.settings.currentDay);
+
             if ( year === hYear && month === hMonth ) {
                 this.$cal.find('['+ this.triggerAttr +'="'+ hDate +'"]').addClass(this.settings.currentDay);;
             }
         },
-
         chooseDate: function(date) {
             this.updateCurrent();
             this.current.date = date;
@@ -306,12 +318,6 @@
             this.current.firstDay = new Date(this.current.year, this.current.month - 1, 1).getDay();
         },
 
-        outputDate: function (d) {
-            return this.settings.outputFormat
-                    .replace('{Y}', d.year)
-                    .replace('{M}', d.month)
-                    .replace('{D}', d.date);
-        },
 
         renderSelect: function(fullDate) {
             var yearOptionHtml  = '';
@@ -340,9 +346,7 @@
 
             this.$el.val(this.outputDate(this.current));
         },
-        isLeapYear: function(year) {
-            return ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0);
-        },
+
         getFullDateCount: function(fullDate) {
             var dateRe       = new RegExp('-' + fullDate.month + '-');
             var month31      = '-1-3-5-7-8-10-12-';
@@ -359,7 +363,7 @@
         renderWeek: function(date) {
             var weekName = this.settings.weekName;
             var len      = weekName.length;
-            var weekEl   = this.$cal.find('.ECal-weeks');
+            var weekEl   = this.$cal.find(this.settings.selector.week);
             var resHTML  = '';
 
             var tplWeek = this.settings.template.week;
@@ -419,7 +423,7 @@
             }
             dateHTML += '</ul>';
 
-            this.$cal.find('.ECal-body').html(dateHTML);
+            this.$cal.find(this.settings.selector.body).html(dateHTML);
             this.markSelected();
         }
     };
