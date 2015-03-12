@@ -119,7 +119,7 @@
                 // content元素只能选择一个，如果弹出内容元素在$el外部，反查传入jQuery对象个数，也只能有1个
                 if ( $(this.settings.content).length !== 1
                     ||  this.$el.length !== 1  ) {
-                    throw new Error('Content & jQuery element should be juse select only one element.');
+                    throw new Error('「' + EPluginName + '」 Content & jQuery element should be juse select only one element.');
                 }
             }
             this.delay($ele, isOpen);
@@ -161,7 +161,7 @@
 
     $.fn[EPluginName] = function (options) {
         if ( !this.length ) {
-            console.error('The elements['+ this.selector +'] you passed is empty.');
+            console.error('「' + EPluginName + '」 The elements['+ this.selector +'] you passed is empty.');
             return this;
         } else {
             return this.each(function () {

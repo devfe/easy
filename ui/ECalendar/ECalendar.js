@@ -18,8 +18,8 @@
 
     // 插件参数默认值
     var defaults = {
-        id: 'ECalendar',
-        // The time JavaScript born
+        id: null,
+        // The day JavaScript born
         start: '1995-5-1',
         // Last day
         end: '2043-5-1',
@@ -38,47 +38,54 @@
         close: false,
         curr: new Date(),
         template: {
-            trigger: null,
-            wrap: null,
-            empty: null,
-            week: null
-        }
+            trigger: '<span class="ECal-week{WEEK} ECal-date{DATE}" data-date="{DATE}">{DATE}</span>',
+            wrap: '\
+                <div id="{ID}" class="ECal">\
+                    <div class="ECal-change">\
+                        <span data-switch="py" class="ECal-switch prev-year"> « </span>\
+                        <span data-switch="pm" class="ECal-switch prev-month"> ‹ </span>\
+                        <span class="ECal-select-year">\
+                            <select data-cal="sYear" name=""></select>\
+                        </span>\
+                        <span class="ECal-select-month">\
+                            <select data-cal="sMonth" name=""></select>\
+                        </span>\
+                        <span data-switch="nm" class="ECal-switch next-month"> › </span>\
+                        <span data-switch="ny" class="ECal-switch next-year"> » </span>\
+                    </div>\
+                    <div class="ECal-weeks"></div>\
+                    <div class="ECal-body"></div>\
+                    <div class="ECal-footer">\
+                        <span class="ECal-today">今天</span>\
+                        <em data-cal="close" class="ECal-close">&times;</em>\
+                    </div>\
+                </div>',
+            empty: '<span class="ECal-date">&nbsp;</span>',
+            week: '<span class="ECal-weekname{NUM}">{WNAME}</span>'
+        },
+        onReady: emptyFunction,
+        onChoose: emptyFunction
     };
 
     function ECalendar($element, options) {
-        this.$el = $element;
+        this.$el       = $element;
 
-        this.settings = $.extend(true, {}, defaults, options) ;
+        this.settings  = $.extend({}, defaults, options) ;
 
         this._defaults = defaults;
-        this._name = EPluginName;
+        this._name     = EPluginName;
+        this._guid     = $element.data('Eguid');
 
         this.init();
     }
 
     ECalendar.prototype = {
         init: function() {
-            var TPL = this.settings.template.wrap || '\
-            <div id="{ID}" class="ECal">\
-                <div class="ECal-change">\
-                    <span data-switch="py" class="ECal-switch prev-year"> « </span>\
-                    <span data-switch="pm" class="ECal-switch prev-month"> ‹ </span>\
-                    <span class="ECal-select-year">\
-                        <select data-cal="sYear" name=""></select>\
-                    </span>\
-                    <span class="ECal-select-month">\
-                        <select data-cal="sMonth" name=""></select>\
-                    </span>\
-                    <span data-switch="nm" class="ECal-switch next-month"> › </span>\
-                    <span data-switch="ny" class="ECal-switch next-year"> » </span>\
-                </div>\
-                <div class="ECal-weeks"></div>\
-                <div class="ECal-body"></div>\
-                <div class="ECal-footer">\
-                    <span class="ECal-today">今天</span>\
-                    <em data-cal="close" class="ECal-close">&times;</em>\
-                </div>\
-            </div>';
+            var TPL = this.settings.template.wrap;
+
+            if ( !this.settings.id ) {
+                throw new Error( '「' + EPluginName + '」 The calendar`s id should be given a uniq String' );
+            }
 
             if ( $('#' + this.settings.id).length < 1 ) {
                 TPL = TPL.replace('{ID}', this.settings.id);
@@ -94,15 +101,16 @@
 
             this.triggerAttr = this.settings.selector.trigger.replace(/\[|\]/g, '');
 
-            this.current = this.formatDate(this.settings.curr);
+            this.current     = this.formatDate(this.settings.curr);
+
             // 记录高亮显示「已选择」的时间
-            this.highLight = this.formatDate(this.settings.curr);
+            this.highLight   = this.formatDate(this.settings.curr);
 
             // 初始化日历位置
             this.initStyle();
 
-            // 设置已选择日期
-            this.setSelect(this.current);
+            // 设置年份月份选择下拉框
+            this.renderSelect(this.current);
 
             // 渲染当前周
             this.renderWeek(this.current);
@@ -113,9 +121,11 @@
             // 绑定事件
             this.bindEvent();
 
-            if (this.settings.close) {
+            if ( this.settings.close ) {
                 this.$close.show();
             }
+
+            this.settings.onReady.call(this);
         },
 
         initStyle: function() {
@@ -125,7 +135,6 @@
             var oTop  = el.offset().top;
 
             this.$cal.css({
-                position: 'absolute',
                 top: oTop + h,
                 left: oLeft
             });
@@ -138,7 +147,7 @@
 
             if ( typeof fullDate === 'string' ) {
                 if( !dateRe.test(fullDate) ) {
-                    throw new Error('Illegal date string :`' + currTimeString + '`.');
+                    throw new Error('「' + EPluginName + '」 Illegal date string :`' + currTimeString + '`.');
                 } else {
                     dateArr = fullDate.split('-');
                     now = new Date(dateArr[0], parseInt(dateArr[1]) - 1, dateArr[2])
@@ -167,10 +176,16 @@
         bindEvent: function() {
             var _this = this;
             var changeEvt = [
+                'change',
+                EPluginName,
+                this.Eguid
+            ];
+
+            var changeEvtSelector = [
                 this.settings.selector.sYear,
                 this.settings.selector.sMonth
             ];
-            var clickEvt = [
+            var clickEvtSelector = [
                 this.settings.selector.switcher,
                 this.settings.selector.close
             ];
@@ -178,12 +193,12 @@
             var switcherAttr = this.settings.selector.switcher.replace(/\[|\]/g, '');
 
             this.$cal.undelegate('change')
-            .delegate(changeEvt.join(','), 'change', function () {
+            .delegate(changeEvtSelector.join(','), 'change', function () {
                 _this.renderDate();
             });
 
             this.$cal.undelegate('click')
-            .delegate(clickEvt.join(','), 'click', function () {
+            .delegate(clickEvtSelector.join(','), 'click', function () {
                 var sign = $(this).attr(switcherAttr);
 
                 if ( $(this).is(_this.settings.selector.switcher) ) {
@@ -227,41 +242,42 @@
                 //$(this).removeClass(_this.settings.hoverClass);
             //});
 
-            $(document).bind('click', function() {
+            $(document).unbind()
+            .bind('click', function() {
                 _this.hide();
             });
         },
+
         show: function() {
             this.$cal.show()
             this.markSelected();
         },
+        hide: function() {
+            this.$cal.hide()
+        },
+
         markSelected: function() {
-            var year = this.current.year;
-            var month = this.current.month;
-            var hYear = this.highLight.year;
+            var year   = this.current.year;
+            var month  = this.current.month;
+            var hYear  = this.highLight.year;
             var hMonth = this.highLight.month;
-            var hDate = this.highLight.date;
+            var hDate  = this.highLight.date;
 
             this.$cal.find(this.settings.selector.trigger).removeClass(this.settings.currentDay);
             if ( year === hYear && month === hMonth ) {
                 this.$cal.find('['+ this.triggerAttr +'="'+ hDate +'"]').addClass(this.settings.currentDay);;
             }
         },
-        hide: function() {
-            this.$cal.hide()
-        },
+
         chooseDate: function(date) {
             this.updateCurrent();
             this.current.date = date;
 
-            this.$el.val(this.settings.outputFormat.replace('{Y}', this.current.year).replace('{M}', this.current.month).replace('{D}', this.current.date));
+            this.$el.val(this.outputDate(this.current));
             this.highLight = $.extend(true, {}, this.current);
 
-            if (this.callback) {
-                this.callback.apply(this);
-            }
-
             this.hide();
+            this.settings.onChoose.call(this, this.current);
         },
         goTo: function(dir) {
             if (dir === 'py') {
@@ -289,36 +305,47 @@
             this.current.day      = 1;
             this.current.firstDay = new Date(this.current.year, this.current.month - 1, 1).getDay();
         },
-        setSelect: function(fullDate) {
-            var selectYear  = this.$cal.find('.ECal-select-year select');
-            var selectMonth = this.$cal.find('.ECal-select-month select');
+
+        outputDate: function (d) {
+            return this.settings.outputFormat
+                    .replace('{Y}', d.year)
+                    .replace('{M}', d.month)
+                    .replace('{D}', d.date);
+        },
+
+        renderSelect: function(fullDate) {
+            var yearOptionHtml  = '';
+            var monthOptionHtml = '';
 
             var start = this.formatDate(this.settings.start);
             var end   = this.formatDate(this.settings.end);
 
             // 年、月开始结束范围
-            this.yearHead = start.year;
+            this.yearHead  = start.year;
             this.monthHead = start.month;
-            this.yearTail = end.year;
+            this.yearTail  = end.year;
             this.monthTail = end.month;
 
             for (var i = start.year; i <= end.year; i++) {
-                selectYear.append('<option value="'+ i +'">'+ i +'</option>');
+                yearOptionHtml += ('<option value="'+ i +'">'+ i +'</option>');
             }
             for (var k = 1; k < 13; k++) {
-                selectMonth.append('<option value="'+ k +'">'+ k +'</option>');
+                monthOptionHtml += ('<option value="'+ k +'">'+ k +'</option>');
             }
 
-            selectYear.val(fullDate.year);
-            selectMonth.val(fullDate.month);
-            this.$el.val(this.current.year + '-' + this.current.month + '-' + this.current.date);
+            this.$sYear.html(yearOptionHtml)
+                        .val(fullDate.year);
+            this.$sMonth.html(monthOptionHtml)
+                        .val(fullDate.month);
+
+            this.$el.val(this.outputDate(this.current));
         },
         isLeapYear: function(year) {
             return ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0);
         },
         getFullDateCount: function(fullDate) {
-            var dateRe = new RegExp('-' + fullDate.month + '-');
-            var month31 = '-1-3-5-7-8-10-12-';
+            var dateRe       = new RegExp('-' + fullDate.month + '-');
+            var month31      = '-1-3-5-7-8-10-12-';
             var febDateCount = this.isLeapYear(fullDate.year) ? 29 : 28;
 
             if (dateRe.test(month31)) {
@@ -331,12 +358,11 @@
         },
         renderWeek: function(date) {
             var weekName = this.settings.weekName;
-            var len = weekName.length;
-            var weekEl = this.$cal.find('.ECal-weeks');
-            var resHTML = '';
+            var len      = weekName.length;
+            var weekEl   = this.$cal.find('.ECal-weeks');
+            var resHTML  = '';
 
-            var tplWeek = this.settings.template.week
-                        || '<span class="ECal-weekname{NUM}">{WNAME}</span>';
+            var tplWeek = this.settings.template.week;
 
             for (var i = 0; i < len; i++) {
                 resHTML += tplWeek.replace(/\{NUM\}/g, i)
@@ -351,10 +377,8 @@
                 dateHTML = '',
                 date;
 
-            var tplEmpty = this.settings.template.empty
-                        || '<span class="ECal-date">&nbsp;</span>';
-            var tplTirgger = this.settings.template.trigger
-                        || '<span class="ECal-week{WEEK} ECal-date{DATE}" data-date="{DATE}">{DATE}</span>';
+            var tplEmpty = this.settings.template.empty;
+            var tplTirgger = this.settings.template.trigger;
 
             if (typeof d !== 'undefined') {
                 date = this.formatDate(d);
@@ -406,7 +430,7 @@
 
     $.fn[EPluginName] = function (options) {
         if ( !this.length ) {
-            console.error('The elements['+ this.selector +'] you passed is empty.');
+            console.error('「' + EPluginName + '」 The elements['+ this.selector +'] you passed is empty.');
             return this;
         } else {
             return this.each(function () {

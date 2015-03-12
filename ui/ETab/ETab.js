@@ -51,7 +51,7 @@
             this.anchors  = this.$el.find(this.settings.selector.anchor);
 
             if ( this.triggers.length - this.anchors.length !== this.items.length ) {
-                throw new Error('The tab item count must equals to tab content count.');
+                throw new Error('「' + EPluginName + '」 The tab item count must equals to tab content count.');
             } else {
                 this.bindEvent();
 
@@ -133,7 +133,7 @@
 
     $.fn[EPluginName] = function (options) {
         if ( !this.length ) {
-            console.error('The elements['+ this.selector +'] you passed is empty.');
+            console.error('「' + EPluginName + '」 The elements['+ this.selector +'] you passed is empty.');
             return this;
         } else {
             return this.each(function () {
