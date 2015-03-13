@@ -2,6 +2,9 @@ extends ../assets/layout
 
 block style
   link(type="text/css", rel="stylesheet", href="./#{name}.css")
+  style(type="text/css").
+    table { border-collapse: collapse; }
+    #ID_Must_Unique2 td { padding: 5px 6px; border:1px solid #eee; text-align: center; }
 
 block content
 
@@ -20,6 +23,10 @@ block content
     .demo
       input(type="text", id="ECalendar2")
 
+  fieldset
+    legend template: table
+    .demo
+      input(type="text", id="ECalendar3")
 
 
 block localScript
@@ -37,4 +44,38 @@ block localScript
           alert('You choose date:' + this.outputDate(cDate));
         }
     });
-    
+
+    $('#ECalendar3').ECalendar({
+        id: 'ID_Must_Unique2',
+        template: {
+            triggerTag: 'tr',
+            trigger: '<td class="ECal-week{WEEK} ECal-date{DATE}" data-date="{DATE}">{DATE}</td>',
+            wrap   : '\
+                <div id="{ID}" class="ECal">\
+                    <div class="ECal-change">\
+                        <span data-switch="py" class="ECal-switch prev-year"> « </span>\
+                        <span data-switch="pm" class="ECal-switch prev-month"> ‹ </span>\
+                        <span class="ECal-select-year">\
+                            <select data-cal="sYear" name=""></select>\
+                        </span>\
+                        <span class="ECal-select-month">\
+                            <select data-cal="sMonth" name=""></select>\
+                        </span>\
+                        <span data-switch="nm" class="ECal-switch next-month"> › </span>\
+                        <span data-switch="ny" class="ECal-switch next-year"> » </span>\
+                    </div>\
+                    <table>\
+                        <thead><tr data-cal="week" class="ECal-weeks"></tr></thead>\
+                        <tbody class="ECal-body"  data-cal="body">\
+                        </tbody>\
+                        <tfoot class="ECal-footer">\
+                            <tr>\
+                                <td colspan="7" align="center" class="ECal-today">今天<span data-cal="close" class="ECal-close">&times;</span></td>\
+                            </tr>\
+                        </tfoot>\
+                    </table>\
+                </div>',
+            empty : '<td class="ECal-date">&nbsp;</td>',
+            week  : '<th class="ECal-weekname{NUM}">{WNAME}</th>'
+        }
+    });

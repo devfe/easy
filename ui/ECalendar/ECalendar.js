@@ -40,6 +40,7 @@
             close   : '[data-cal="close"]'
         },
         template: {
+            triggerTag: 'li',
             trigger: '<span class="ECal-week{WEEK} ECal-date{DATE}" data-date="{DATE}">{DATE}</span>',
             wrap   : '\
                 <div id="{ID}" class="ECal">\
@@ -56,7 +57,7 @@
                         <span data-switch="ny" class="ECal-switch next-year"> » </span>\
                     </div>\
                     <div data-cal="week" class="ECal-weeks"></div>\
-                    <div data-cal="body" class="ECal-body"></div>\
+                    <div class="ECal-body"><ul data-cal="body"></ul></div>\
                     <div class="ECal-footer">\
                         <span class="ECal-today">今天</span>\
                         <em data-cal="close" class="ECal-close">&times;</em>\
@@ -381,8 +382,9 @@
                 dateHTML = '',
                 date;
 
-            var tplEmpty = this.settings.template.empty;
-            var tplTirgger = this.settings.template.trigger;
+            var tpl = this.settings.template;
+            var tplEmpty = tpl.empty;
+            var tplTirgger = tpl.trigger;
 
             if (typeof d !== 'undefined') {
                 date = this.formatDate(d);
@@ -394,9 +396,8 @@
 
             dateCount = this.getFullDateCount(date);
 
-            dateHTML += '<ul>';
             for (var i = 0; i < 6; i++) {
-                dateHTML += '<li>';
+                dateHTML += '<'+ tpl.triggerTag +'>';
 
                 for (var j = 0; j < 7; j++) {
                     if (k > dateCount) {
@@ -419,9 +420,8 @@
                     }
                 }
 
-                dateHTML += '</li>';
+                dateHTML += '</'+ tpl.triggerTag +'>';
             }
-            dateHTML += '</ul>';
 
             this.$cal.find(this.settings.selector.body).html(dateHTML);
             this.markSelected();
