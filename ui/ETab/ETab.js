@@ -23,7 +23,9 @@
         lazyload     : null,
         selector     : {
             trigger  : '[data-tab="trigger"]',
-            item     : '[data-tab="item"]'
+            item     : '[data-tab="item"]',
+            // 点击锚点仅切换trigger样式，不切换内容显示状态
+            anchor   : '[data-anchor]'
         },
         onReady      : function() {},
         onSwitch     : function() {}
@@ -33,7 +35,7 @@
     function ETab($element, options) {
         this.$el       = $element;
 
-        this.settings  = $.extend({}, defaults, options) ;
+        this.settings  = $.extend(true, {}, defaults, options);
 
         this._defaults = defaults;
         this._name     = EPluginName;
@@ -46,9 +48,10 @@
         init: function() {
             this.triggers = this.$el.find(this.settings.selector.trigger);
             this.items    = this.$el.find(this.settings.selector.item);
+            this.anchors  = this.$el.find(this.settings.selector.anchor);
 
-            if ( this.triggers.length !== this.items.length ) {
-                throw new Error('The tab item count must equals to tab content count.');
+            if ( this.triggers.length - this.anchors.length !== this.items.length ) {
+                throw new Error('「' + EPluginName + '」 The tab item count must equals to tab content count.');
             } else {
                 this.bindEvent();
 
@@ -97,8 +100,16 @@
         },
 
         go: function(n) {
-            this.triggers.removeClass(this.settings.current).eq(n).addClass(this.settings.current);
-            this.items.hide().eq(n).show();
+            var triggers = this.triggers;
+            var currTris = triggers.eq(n);
+
+            triggers.removeClass(this.settings.current)
+            currTris.addClass(this.settings.current);
+
+            // 点击锚点仅切换trigger样式，不切换内容显示状态
+            if ( !currTris.is(this.settings.selector.anchor) ) {
+                this.items.hide().eq(n).show();
+            }
 
             this.settings.onSwitch.call(this, n);
 
@@ -122,7 +133,7 @@
 
     $.fn[EPluginName] = function (options) {
         if ( !this.length ) {
-            console.error('The elements['+ this.selector +'] you passed is empty.');
+            console.error('「' + EPluginName + '」 The elements['+ this.selector +'] you passed is empty.');
             return this;
         } else {
             return this.each(function () {

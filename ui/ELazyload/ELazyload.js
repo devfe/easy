@@ -40,13 +40,13 @@
 
 
     function ELazyload($element, options) {
-        this.$el = $element;
+        this.$el       = $element;
 
-        this.settings = $.extend({}, defaults, options) ;
+        this.settings  = $.extend({}, defaults, options) ;
 
-        this.Eguid = $element.data('Eguid');
         this._defaults = defaults;
-        this._name = EPluginName;
+        this._name     = EPluginName;
+        this._guid     = $element.data('Eguid');
 
         this.init();
     }
@@ -60,9 +60,9 @@
             } else {
                 this.$targets = this.$el;
             }
-            //console.log(this.Eguid);
+            //console.log(this._guid);
 
-            this._eventString = 'scroll.lazyload.'+ this.Eguid +' resize.lazyload.' + this.Eguid;
+            this._eventString = 'scroll.lazyload.'+ this._guid +' resize.lazyload.' + this._guid;
 
             this.$w = $(window);
 
@@ -216,7 +216,7 @@
         insertHolder: function($ele) {
             if ( this.settings.type !== 'img' ) {
                 if ( !$ele.is(':visible') && !$ele.prev().is('.Elazy-holder') ) {
-                    $ele.before('<ins class="ELazy-holder ELazy-holder'+ this.Eguid +'"></ins>');
+                    $ele.before('<ins class="ELazy-holder ELazy-holder'+ this._guid +'"></ins>');
                     this.$holder = $ele.prev('.ELazy-holder');
                 }
             }
@@ -240,7 +240,7 @@
 
     $.fn[EPluginName] = function (options) {
         if ( !this.length ) {
-            console.error('The elements['+ this.selector +'] you passed is empty.');
+            console.error('「' + EPluginName + '」 The elements['+ this.selector +'] you passed is empty.');
             return this;
         } else {
             return this.each(function () {

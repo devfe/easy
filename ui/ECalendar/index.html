@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ECalendar - 1.0.0</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="../assets/plugins.css">
+    <link type="text/css" rel="stylesheet" href="./ECalendar.css">
+  </head>
+  <body>
+    <div class="nav"><strong><a href="/">Easy UI</a></strong>&nbsp;»</div><br><br>
+    <fieldset>
+      <legend>Normal</legend>
+      <div class="demo">
+        <input type="text" id="ECalendar">
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>outputFormat: '{Y}_{M}_{D}'</legend>
+      <div class="demo">
+        <input type="text" id="ECalendar1">
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>onChoose: fn</legend>
+      <div class="demo">
+        <input type="text" id="ECalendar2">
+      </div>
+    </fieldset>
+    <div class="clr"></div>
+    <script src="../assets/jquery-1.6.4.js"></script>
+    <script src="./ECalendar.js"></script>
+    <script>
+      $('#ECalendar').ECalendar({
+          id : 'ID_Must_Unique'
+      });
+      $('#ECalendar1').ECalendar({
+          id: 'Ant_id_you_want',
+          outputFormat: '{Y}_{M}_{D}'
+      });
+      $('#ECalendar2').ECalendar({
+          id: 'ID_Must_Unique1',
+          onChoose: function(cDate) {
+            alert('You choose date:' + this.outputDate(cDate));
+          }
+      });
+    </script>
+  </body>
+</html>

@@ -105,6 +105,24 @@
         </div>
       </div>
     </fieldset>
+    <fieldset>
+      <legend>anchor: 1</legend>
+      <div class="demo">
+        <div class="ETab">
+          <ul>
+            <li data-tab="trigger" class="current">Tab 1</li>
+            <li data-tab="trigger">Tab 2</li>
+            <li data-tab="trigger">Tab 3</li>
+            <li data-tab="trigger" data-anchor="1">Anchor</li>
+          </ul>
+          <div>
+            <div data-tab="item">1. Lorem ipsum dolor sit amet, consectetur adipiscing elit. In non purus in leo fermentum mattis id ut felis. Aenean blandit erat maximus lacus blandit pharetra. Nullam ac finibus elit. Pellentesque dictum lectus non pellentesque posuere. Pellentesque non sagittis nisi. Aliquam sit amet lectus vehicula</div>
+            <div data-tab="item" class="hide">2. Lorem ipsum dolor sit amet, consectetur adipiscing elit. In non purus in leo fermentum mattis id ut felis. Aenean blandit erat maximus lacus blandit pharetra. Nullam ac finibus elit. Pellentesque dictum lectus non pellentesque posuere. Pellentesque non sagittis nisi. Aliquam sit amet lectus vehicula</div>
+            <div data-tab="item" class="hide">3. Lorem ipsum dolor sit amet, consectetur adipiscing elit. In non purus in leo fermentum mattis id ut felis. Aenean blandit erat maximus lacus blandit pharetra. Nullam ac finibus elit. Pellentesque dictum lectus non pellentesque posuere. Pellentesque non sagittis nisi. Aliquam sit amet lectus vehicula</div>
+          </div>
+        </div>
+      </div>
+    </fieldset>
     <div class="clr"></div>
     <script src="../assets/jquery-1.6.4.js"></script>
     <script src="./ETab.js"></script>
@@ -131,6 +149,9 @@
       });
       $('.ETab').eq(4).ETab({
         lazyload: 'data-src'
+      });
+      $('.ETab').eq(5).ETab({
+        a: 1
       });
     </script>
   </body>

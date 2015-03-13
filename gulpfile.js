@@ -53,6 +53,10 @@ var UI_CONFIG_LIST = [{
     name: 'ETips',
     version: '1.0.0',
     hasCSS: false
+},{
+    name: 'ECalendar',
+    version: '1.0.0',
+    hasCSS: true
 }];
 
 var DIR = {
@@ -162,7 +166,7 @@ gulp.task('compile_jade', function() {
 
             compileJade(jadeFilePath, config);
         } else {
-            console.log('config file not found.')
+            console.log('config file not found.' + file)
         }
     });
 });

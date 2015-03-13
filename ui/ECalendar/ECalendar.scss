@@ -1,0 +1,68 @@
+.ECal {
+    position: absolute;
+    display: none;
+    background:#fff;
+    padding:10px;
+    box-shadow:0 0 10px rgba(0,0,0,.12);
+
+    .ECal-body span,
+    .ECal-weeks span {
+        width:30px;
+        height:30px;
+        line-height:30px;
+        text-align:center;
+        display:inline-block;
+        *zoom:1;
+    }
+    .ECal-weeks span {
+        border:1px solid #fff;
+    }
+    .ECal-body span {
+        border:1px solid #eee;
+        &:hover {
+            background:#eee;
+            cursor:pointer;
+        }
+    }
+
+    .ECal-switch {
+        background:#eee;
+        width:20px;
+        height:20px;
+        line-height:20px;
+        text-align:center;
+        display:inline-block;
+        *zoom:1;
+        cursor:pointer;
+    }
+
+    .ECal-active {
+        background:#fc0;
+    }
+
+    .ECal-footer span {
+        display:block;
+        padding:4px 0;
+        text-align:center;
+        &:hover {
+            background:#eee;
+            cursor:pointer;
+        }
+    }
+
+    .ECal-close {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+
+        width: 20px;
+        height: 20px;
+        border-radius: 10px;
+        background:#333;
+
+        color:#fff;
+        font:normal 12px/20px simsun;
+        text-align: center;
+        cursor: pointer;
+    }
+}

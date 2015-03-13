@@ -1,0 +1,40 @@
+extends ../assets/layout
+
+block style
+  link(type="text/css", rel="stylesheet", href="./#{name}.css")
+
+block content
+
+  fieldset
+    legend Normal
+    .demo
+      input(type="text", id="ECalendar")
+
+  fieldset
+    legend outputFormat: '{Y}_{M}_{D}'
+    .demo
+      input(type="text", id="ECalendar1")
+
+  fieldset
+    legend onChoose: fn
+    .demo
+      input(type="text", id="ECalendar2")
+
+
+
+block localScript
+  script.
+    $('#ECalendar').ECalendar({
+        id : 'ID_Must_Unique'
+    });
+    $('#ECalendar1').ECalendar({
+        id: 'Ant_id_you_want',
+        outputFormat: '{Y}_{M}_{D}'
+    });
+    $('#ECalendar2').ECalendar({
+        id: 'ID_Must_Unique1',
+        onChoose: function(cDate) {
+          alert('You choose date:' + this.outputDate(cDate));
+        }
+    });
+    
