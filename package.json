@@ -32,6 +32,7 @@
   "license": "MIT",
 
   "jshintConfig": {
+    "multistr": true,
     "globalstrict": true,
     "forin": true,
     "jquery": true,

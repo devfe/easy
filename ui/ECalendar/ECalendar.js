@@ -116,7 +116,7 @@
             this.renderSelect(this.current);
 
             // 渲染当前周
-            this.renderWeek(this.current);
+            this.renderWeek();
 
             // 渲染当前日期
             this.renderDate();
@@ -133,11 +133,8 @@
 
         bindEvent: function() {
             var _this = this;
-            var changeEvt = [
-                'change',
-                EPluginName,
-                this.Eguid
-            ];
+            var changeEvt = [ 'change', EPluginName, this.Eguid ];
+            var clickEvt = [ 'click', EPluginName, this.Eguid ];
 
             var changeEvtSelector = [
                 this.settings.selector.sYear,
@@ -150,13 +147,13 @@
 
             var switcherAttr = this.settings.selector.switcher.replace(/\[|\]/g, '');
 
-            this.$cal.undelegate('change')
-            .delegate(changeEvtSelector.join(','), 'change', function () {
+            this.$cal.undelegate(changeEvt.join('.'))
+            .delegate(changeEvtSelector.join(','), changeEvt.join('.'), function () {
                 _this.renderDate();
             });
 
-            this.$cal.undelegate('click')
-            .delegate(clickEvtSelector.join(','), 'click', function () {
+            this.$cal.undelegate(clickEvt.join('.'))
+            .delegate(clickEvtSelector.join(','), clickEvt.join('.'), function () {
                 var sign = $(this).attr(switcherAttr);
 
                 if ( $(this).is(_this.settings.selector.switcher) ) {
@@ -225,10 +222,10 @@
 
             if ( typeof fullDate === 'string' ) {
                 if( !dateRe.test(fullDate) ) {
-                    throw new Error('「' + EPluginName + '」 Illegal date string :`' + currTimeString + '`.');
+                    throw new Error('「' + EPluginName + '」 Illegal date string :`' + fullDate + '`.');
                 } else {
                     dateArr = fullDate.split('-');
-                    now = new Date(dateArr[0], parseInt(dateArr[1]) - 1, dateArr[2])
+                    now = new Date(dateArr[0], parseInt(dateArr[1]) - 1, dateArr[2]);
                 }
             } else {
                 now = fullDate;
@@ -251,7 +248,7 @@
             };
         },
         isLeapYear: function(year) {
-            return ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0);
+            return ((year % 4 === 0) && (year % 100 !== 0)) || (year % 400 === 0);
         },
         outputDate: function (d) {
             return this.settings.outputFormat
@@ -261,11 +258,11 @@
         },
 
         show: function() {
-            this.$cal.show()
+            this.$cal.show();
             this.markSelected();
         },
         hide: function() {
-            this.$cal.hide()
+            this.$cal.hide();
         },
 
         markSelected: function() {
@@ -279,7 +276,7 @@
             .removeClass(this.settings.currentDay);
 
             if ( year === hYear && month === hMonth ) {
-                this.$cal.find('['+ this.triggerAttr +'="'+ hDate +'"]').addClass(this.settings.currentDay);;
+                this.$cal.find('['+ this.triggerAttr +'="'+ hDate +'"]').addClass(this.settings.currentDay);
             }
         },
         chooseDate: function(date) {
@@ -355,13 +352,13 @@
 
             if (dateRe.test(month31)) {
                 return 31;
-            } else if (fullDate.month == 2) {
+            } else if (fullDate.month === 2) {
                 return febDateCount;
             } else {
                 return 30;
             }
         },
-        renderWeek: function(date) {
+        renderWeek: function() {
             var weekName = this.settings.weekName;
             var len      = weekName.length;
             var weekEl   = this.$cal.find(this.settings.selector.week);
@@ -382,11 +379,11 @@
                 dateHTML = '',
                 date;
 
-            var tpl = this.settings.template;
-            var tplEmpty = tpl.empty;
+            var tpl        = this.settings.template;
+            var tplEmpty   = tpl.empty;
             var tplTirgger = tpl.trigger;
 
-            if (typeof d !== 'undefined') {
+            if ( typeof d !== 'undefined' ) {
                 date = this.formatDate(d);
             } else {
                 date = this.current;
@@ -396,15 +393,15 @@
 
             dateCount = this.getFullDateCount(date);
 
-            for (var i = 0; i < 6; i++) {
+            for ( i = 0; i < 6; i++ ) {
                 dateHTML += '<'+ tpl.triggerTag +'>';
 
-                for (var j = 0; j < 7; j++) {
-                    if (k > dateCount) {
-                        dateHTML += tplEmpty
+                for ( j = 0; j < 7; j++ ) {
+                    if ( k > dateCount ) {
+                        dateHTML += tplEmpty;
                     } else {
-                        if (i == 0) {
-                            if (j > date.firstDay-1) {
+                        if ( i === 0 ) {
+                            if ( j > date.firstDay-1 ) {
                                 dateHTML += tplTirgger.replace(/\{WEEK\}/g, j)
                                             .replace(/\{DATE\}/g, k);
 
