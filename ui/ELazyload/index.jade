@@ -21,6 +21,14 @@ block content
         .mod(style="height:300px") 后加载的模块
         .mod(style="height:300px;display:none;background:#ccc;") 后加载的隐藏模块
 
+  fieldset
+    legend Normal
+    .demo
+      .ELazyload#lazyload-img1
+        each img in imgs
+          .img-list
+            img(width="100", height="100", data-src="#{img}")
+
 block localScript
   script.
     $('#lazyload-img').ELazyload({
@@ -39,4 +47,14 @@ block localScript
           this.$el.fadeIn();
         }
       }
-    })
+    });
+    $('#lazyload-img1').ELazyload({
+      debug: false,
+      threshold: 0,
+      onComplete: function() {
+        console.log('Images All loaded complated.');
+      },
+      onAppear: function($img) {
+        console.log($img.get(0));
+      }
+    });

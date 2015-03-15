@@ -24,6 +24,8 @@
         delay: 50,
         type: 'img',
         source: 'data-src',
+        // 加载完成后删除source属性
+        removeSource: true,
         threshold: 0,
         loadingClass: 'ELazy-loading',
         errorClass: 'ELazy-error',
@@ -34,6 +36,7 @@
         ],
         onAppear: emptyFunction,
         onReady: emptyFunction,
+        onComplete: emptyFunction,
         onError: emptyFunction,
         onLoad: emptyFunction
     };
@@ -77,6 +80,8 @@
             this.loaded = [];
 
             this.bindEvent();
+
+            this.supportRect = this.supportClientRect();
 
             // 初始化完成立即加载在可视区的图片
             this.check(this.$targets);
@@ -158,10 +163,14 @@
                 $ele.data('loaded', true);
                 if ( _this.settings.type === 'img' ) {
                     $ele.attr('src', $ele.attr(_this.settings.source));
+
+                    if ( _this.settings.removeSource ) {
+                        $ele.removeAttr(_this.settings.source);
+                    }
                 } else {
                     $ele.removeClass(_this.settings.loadingClass);
-                    _this.settings.onAppear.call(_this);
                 }
+                _this.settings.onAppear.call(_this, $ele);
             }
 
             $images.each(function() {
@@ -205,6 +214,7 @@
 
             if ( this.total === this.loaded.length ) {
                 this.$w.unbind(this._eventString);
+                this.settings.onComplete.call(this);
 
                 if ( this.settings.debug ) {
                     console.log('All done.');
@@ -222,16 +232,49 @@
             }
         },
 
+        // 高级浏览器支持元素坐标方法
+        supportClientRect: function () {
+            var div = document.createElement('div');
+            var support = 'getBoundingClientRect' in div;
+
+            div = null;
+            return support;
+        },
+
         // 元素是否在窗口内
         inWindow: function($ele) {
             var wHeight = this.$w.height();
             var scrollTop = $('body').scrollTop() || $('html').scrollTop();
-            var eleTop= $ele.offset().top;
-            var eleHeight = $ele.height();
-            var eleBottom = eleTop + eleHeight;
 
-            return (eleTop < wHeight + scrollTop + this.settings.threshold && eleTop > scrollTop)
-                    || eleBottom < wHeight + scrollTop && eleBottom > scrollTop;
+            // 优先使用 getBoundingClientRect 来判断元素坐标
+            if ( this.supportRect ) {
+                var coords = $ele.get(0).getBoundingClientRect();
+                var eleTop = coords.top;
+                var eleLeft = coords.left;
+                var eleBottom = coords.top + coords.height;
+
+                return (
+                        eleTop >= 0
+                        && eleLeft >= 0
+                        && eleTop <= wHeight + this.settings.threshold
+                    ) || (
+                        eleBottom >= 0
+                        && eleLeft >= 0
+                        && eleBottom <= wHeight
+                    );
+            } else {
+                var eleTop= $ele.offset().top;
+                var eleHeight = $ele.height();
+                var eleBottom = eleTop + eleHeight;
+
+                return (
+                        eleTop < wHeight + scrollTop + this.settings.threshold
+                        && eleTop > scrollTop
+                    ) || (
+                        eleBottom < wHeight + scrollTop
+                        && eleBottom > scrollTop
+                    );
+            }
         }
     };
 
