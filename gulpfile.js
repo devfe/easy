@@ -12,8 +12,8 @@ var sass    = require('gulp-sass');
 var uglify  = require('gulp-uglify');
 
 // build
-var concat  = require('gulp-concat');
-var rename  = require('gulp-rename');
+var concat     = require('gulp-concat');
+var rename     = require('gulp-rename');
 var sourcemaps = require('gulp-sourcemaps');
 
 // check
@@ -24,66 +24,16 @@ var jshintConfig = packageJSON.jshintConfig;
 // test images
 var testData     = require('./test/data');
 
+var DIR          = require('./dir.js');
+var UI_CONFIG_LIST   = require('./config.js');
+
 var BASE_VERSION = '1.0.0';
-
-var UI_CONFIG_LIST = [{
-    name: 'EDropdown',
-    version: '1.0.0',
-    hasCSS: false
-},{
-    name: 'ELazyload',
-    version: '1.0.0',
-    hasCSS: false
-},{
-    name: 'ESlide',
-    version: '1.0.0',
-    hasCSS: true
-},{
-    name: 'ETab',
-    version: '1.0.0',
-    hasCSS: false
-},{
-    name: 'EModal',
-    version: '1.0.0',
-    hasCSS: true
-},{
-    name: 'ECarousel',
-    version: '',
-    hasCSS: true
-},{
-    name: 'ETips',
-    version: '1.0.0',
-    hasCSS: false
-},{
-    name: 'ECalendar',
-    version: '1.0.0',
-    hasCSS: true
-}];
-
-var DIR = {
-    ui         : './ui',
-    assets     : './ui/assets',
-    scss       : './ui/*/*.scss',
-    script     : ['./ui/*/*.js', '!./ui/assets/*.js'],
-
-    jade2watch : './ui/*/*.jade',
-
-    release    : 'http://localhost:1024/E/ui/',
-
-    build: {
-        combo : 'build/E/1.0.0',
-        ui    : 'build/E/ui/',
-        biz   : 'build/E/biz/1.0.0/',
-        base  : 'build/E/base/1.0.0'
-    }
-};
-
 
 gulp.task('rebuild_dir', function() {
     var configContent = '';
-    var jadeContent = fs.readFileSync(path.join(DIR.assets, 'template.jade'), 'utf8');
-    var jsContent = fs.readFileSync(path.join(DIR.assets, 'template.js'), 'utf8');
-    var cssContent = '';
+    var jadeContent   = fs.readFileSync(path.join(DIR.assets, 'template.jade'), 'utf8');
+    var jsContent     = fs.readFileSync(path.join(DIR.assets, 'template.js'), 'utf8');
+    var cssContent    = '';
     var readmeContent = '';
 
     function writeFile (filename, content) {
@@ -125,7 +75,6 @@ gulp.task('rebuild_dir', function() {
 
     function loopCheckDir (ui) {
         var dirname    = path.join(DIR.ui, ui.name);
-
         var dirExists  = fs.existsSync(dirname);
 
         if ( !dirExists ) {
@@ -143,9 +92,9 @@ gulp.task('rebuild_dir', function() {
 gulp.task('compress_js', function() {
 
     UI_CONFIG_LIST.forEach(function (ui) {
-        var currentDir = path.join(DIR.ui, ui.name);
+        var currentDir  = path.join(DIR.ui, ui.name);
         var currentFile = path.join(DIR.ui, ui.name, ui.name + '.js');
-        var destDir = path.join(DIR.build.ui, ui.name, ui.version);
+        var destDir     = path.join(DIR.build.ui, ui.name, ui.version);
 
         gulp.src(currentFile)
             .pipe(sourcemaps.init())
@@ -178,7 +127,7 @@ gulp.task('compile_jade', function() {
     var dirs = fs.readdirSync(DIR.ui);
 
     function compileJade(jadePath, data) {
-        data.imgs = testData.imgs;
+        data.imgs   = testData.imgs;
         data.slides = testData.slides;
         gulp.src(jadePath)
             .pipe(jade({
@@ -190,7 +139,7 @@ gulp.task('compile_jade', function() {
 
     dirs.forEach(function(file) {
         var configFilePath = path.join(DIR.ui, file, 'config.json');
-        var jadeFilePath = path.join(DIR.ui, file, 'index.jade');
+        var jadeFilePath   = path.join(DIR.ui, file, 'index.jade');
 
         if (/^E/.test(file) && fs.existsSync(configFilePath) && fs.existsSync(jadeFilePath)) {
             var config = require('./' + configFilePath);
