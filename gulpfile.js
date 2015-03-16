@@ -14,6 +14,7 @@ var uglify  = require('gulp-uglify');
 // build
 var concat  = require('gulp-concat');
 var rename  = require('gulp-rename');
+var sourcemaps = require('gulp-sourcemaps');
 
 // check
 var jshint       = require('gulp-jshint');
@@ -67,9 +68,11 @@ var DIR = {
 
     jade2watch : './ui/*/*.jade',
 
+    release    : 'http://localhost:1024/E/ui/',
+
     build: {
         combo : 'build/E/1.0.0',
-        ui    : 'build/E/ui/1.0.0/',
+        ui    : 'build/E/ui/',
         biz   : 'build/E/biz/1.0.0/',
         base  : 'build/E/base/1.0.0'
     }
@@ -138,9 +141,37 @@ gulp.task('rebuild_dir', function() {
 });
 
 gulp.task('compress_js', function() {
-    gulp.src(DIR.script)
-      .pipe(uglify())
-      .pipe(gulp.dest(DIR.build.ui))
+
+    UI_CONFIG_LIST.forEach(function (ui) {
+        var currentDir = path.join(DIR.ui, ui.name);
+        var currentFile = path.join(DIR.ui, ui.name, ui.name + '.js');
+        var destDir = path.join(DIR.build.ui, ui.name, ui.version);
+
+        gulp.src(currentFile)
+            .pipe(sourcemaps.init())
+            .pipe(uglify({
+                banner: '/* xx.js */',
+                compress: {
+                    global_defs: {
+                        DEBUG: false
+                    }
+                },
+                output: {
+                    ascii_only: true,
+                },
+                outSourceMap: path.join(destDir, ui.name + '.js.map'),
+                sourceRoot: path.join(DIR.release, ui.name),
+                compress: {
+                    // drop_console: true
+                }
+            }))
+            .pipe(sourcemaps.write('./'))
+            .pipe(gulp.dest(destDir));
+    });
+    //
+    // gulp.src(DIR.script)
+    //   .pipe(uglify())
+    //   .pipe(gulp.dest(DIR.build.ui))
 });
 
 gulp.task('compile_jade', function() {
@@ -201,7 +232,7 @@ gulp.task('watch', function() {
 gulp.task('server', function() {
     connect.server({
         port: 1024,
-        root: DIR.ui,
+        root: [DIR.ui, './build'],
         livereload: false
     });
 });
