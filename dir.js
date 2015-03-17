@@ -9,7 +9,7 @@ module.exports = {
     release    : 'http://localhost:1024/E/ui/',
 
     build: {
-        combo : 'build/E/1.0.0',
+        combo : 'build/E/{VERSION}/',
         ui    : 'build/E/ui/',
         biz   : 'build/E/biz/1.0.0/',
         base  : 'build/E/base/1.0.0'

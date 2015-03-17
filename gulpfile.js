@@ -14,6 +14,7 @@ var uglify  = require('gulp-uglify');
 // build
 var concat     = require('gulp-concat');
 var rename     = require('gulp-rename');
+var header     = require('gulp-header');
 var sourcemaps = require('gulp-sourcemaps');
 
 // check
@@ -27,7 +28,31 @@ var testData     = require('./test/data');
 var DIR          = require('./dir.js');
 var UI_CONFIG_LIST   = require('./config.js');
 
-var BASE_VERSION = '1.0.0';
+var COMBO_VERSION = '1.0.0';
+
+var BANNER       = '\
+/*=> <%= name %>\n\
+ *=> <%= date %> */\n\n';
+
+var BANNER_COMBO = '\
+/* ------------------------------------------------------------------------\n\
+ * Easy UI Copyright 2015-2015 @ JD, Inc. Licensed under MIT\n\
+ * @version <%= version %>\n\
+ * @date    <%= date %>\n\
+ * ------------------------------------------------------------------------ */\n';
+
+ var timeString = (function() {
+     var now = new Date();
+     var template = '{Y}-{M}-{D} {h}:{m}:{s}';
+     var timeString = template.replace('{Y}', now.getFullYear())
+                     .replace('{M}', now.getMonth() + 1)
+                     .replace('{D}', now.getDate())
+                     .replace('{h}', now.getHours())
+                     .replace('{m}', now.getMinutes())
+                     .replace('{s}', now.getSeconds());
+
+    return timeString;
+ })();
 
 gulp.task('rebuild_dir', function() {
     var configContent = '';
@@ -90,7 +115,6 @@ gulp.task('rebuild_dir', function() {
 });
 
 gulp.task('compress_js', function() {
-
     UI_CONFIG_LIST.forEach(function (ui) {
         var currentDir  = path.join(DIR.ui, ui.name);
         var currentFile = path.join(DIR.ui, ui.name, ui.name + '.js');
@@ -99,28 +123,46 @@ gulp.task('compress_js', function() {
         gulp.src(currentFile)
             .pipe(sourcemaps.init())
             .pipe(uglify({
-                banner: '/* xx.js */',
                 compress: {
                     global_defs: {
-                        DEBUG: false
-                    }
+                        // DEBUG: true
+                    },
+                    // drop_console: true
                 },
                 output: {
                     ascii_only: true,
                 },
                 outSourceMap: path.join(destDir, ui.name + '.js.map'),
-                sourceRoot: path.join(DIR.release, ui.name),
-                compress: {
-                    // drop_console: true
-                }
+                sourceRoot: path.join(DIR.release, ui.name)
+            }))
+            .pipe(header(BANNER, {
+                name: ui.name,
+                date: timeString
             }))
             .pipe(sourcemaps.write('./'))
             .pipe(gulp.dest(destDir));
     });
-    //
-    // gulp.src(DIR.script)
-    //   .pipe(uglify())
-    //   .pipe(gulp.dest(DIR.build.ui))
+});
+
+gulp.task('concat_js', function () {
+    var buildComboDir = DIR.build.combo.replace('{VERSION}', COMBO_VERSION);
+
+    gulp.src(DIR.script)
+       .pipe(concat('easy.js'))
+       .pipe(sourcemaps.init())
+       .pipe(uglify({
+           output: {
+               ascii_only: true,
+           },
+           outSourceMap: path.join(buildComboDir + 'easy.js.map'),
+           sourceRoot: buildComboDir
+       }))
+       .pipe(header(BANNER_COMBO, {
+           version: COMBO_VERSION,
+           date: timeString
+       }))
+       .pipe(sourcemaps.write('./'))
+       .pipe(gulp.dest(buildComboDir));
 });
 
 gulp.task('compile_jade', function() {
