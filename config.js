@@ -28,6 +28,6 @@ module.exports = [{
     hasCSS: false
 },{
     name: 'ECalendar',
-    version: '1.0.0',
+    version: '1.0.1',
     hasCSS: true
 }];

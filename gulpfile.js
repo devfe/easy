@@ -28,7 +28,7 @@ var testData     = require('./test/data');
 var DIR          = require('./dir.js');
 var UI_CONFIG_LIST   = require('./config.js');
 
-var COMBO_VERSION = '1.0.0';
+var COMBO_VERSION = '1.1.0';
 
 var BANNER       = '\
 /*=> <%= name %>\n\
@@ -115,7 +115,7 @@ gulp.task('rebuild_dir', function() {
 });
 
 gulp.task('compress_js', function() {
-    UI_CONFIG_LIST.forEach(function (ui) {
+    function compress(ui) {
         var currentDir  = path.join(DIR.ui, ui.name);
         var currentFile = path.join(DIR.ui, ui.name, ui.name + '.js');
         var destDir     = path.join(DIR.build.ui, ui.name, ui.version);
@@ -141,6 +141,10 @@ gulp.task('compress_js', function() {
             }))
             .pipe(sourcemaps.write('./'))
             .pipe(gulp.dest(destDir));
+    }
+
+    UI_CONFIG_LIST.forEach(function (ui) {
+        compress(ui);
     });
 });
 
@@ -229,3 +233,4 @@ gulp.task('server', function() {
 });
 
 gulp.task('dev', ['watch', 'server', 'compile_sass', 'compile_jade']);
+gulp.task('build', ['compress_js', 'concat_js']);
