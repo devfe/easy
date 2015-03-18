@@ -5,6 +5,7 @@ var gulp = require('gulp');
 
 // local server
 var connect = require('gulp-connect');
+var browserSync = require('browser-sync');
 
 // compile
 var jade    = require('gulp-jade');
@@ -230,6 +231,16 @@ gulp.task('server', function() {
         root: [DIR.ui, './build'],
         livereload: false
     });
+});
+
+gulp.task('sync', function () {
+  browserSync({
+    // proxy: 'localhost:3000',
+    server: {
+         baseDir: './ui'
+    },
+    files: ['./**/*.{js,css}']
+  });
 });
 
 gulp.task('dev', ['watch', 'server', 'compile_sass', 'compile_jade']);

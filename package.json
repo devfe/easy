@@ -5,10 +5,11 @@
   "main": "gulpfile.js",
   "dependencies": {},
   "devDependencies": {
+    "browser-sync": "^2.3.1",
     "gulp": "^3.8.11",
-    "gulp-header": "^1.2.2",
     "gulp-concat": "^2.4.3",
     "gulp-connect": "^2.2.0",
+    "gulp-header": "^1.2.2",
     "gulp-jade": "^1.0.0",
     "gulp-jshint": "^1.9.2",
     "gulp-livereload": "^3.7.0",
@@ -31,7 +32,6 @@
   ],
   "author": "keelii",
   "license": "MIT",
-
   "jshintConfig": {
     "multistr": true,
     "globalstrict": true,
@@ -41,6 +41,8 @@
     "undef": true,
     "debug": false,
     "lastsemic": true,
-    "predef": ["EPluginVersion"]
+    "predef": [
+      "EPluginVersion"
+    ]
   }
 }
