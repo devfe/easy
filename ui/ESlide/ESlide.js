@@ -27,6 +27,7 @@
         defaultIndex : null,
         current      : 'current',
         lazyload     : null,
+        preload      : false,
         selector     : {
             trigger  : '[data-slide="trigger"]',
             item     : '[data-slide="item"]',
@@ -72,8 +73,6 @@
                 if ( typeof this.settings.defaultIndex === 'number' ) {
                     this.triggers.eq(this.settings.defaultIndex).trigger(this.settings.event);
                 }
-
-                this.settings.onReady.call(this, this.settings.defaultIndex);
             }
 
             // 如果事件是鼠标移入，添加延迟防止误操作
@@ -87,7 +86,9 @@
             }
 
             // 是否使用css3动画切换
-            this._supportCSS3Transition = this.support('opacity') && this.support('transition');
+            this.supportTransition = this.support('opacity') && this.support('transition');
+
+            this.settings.onReady.call(this, this.settings.defaultIndex);
         },
 
         bindEvent: function() {
@@ -172,23 +173,30 @@
 
         // 切换到第n页
         go: function(n) {
-            this.triggers.removeClass(this.settings.current)
-            .eq(n).addClass(this.settings.current);
+            var $allTarget = this.triggers.add(this.items);
+            var $curTarget = this.triggers.eq(n).add(this.items.eq(n));
+            var $currItem = this.items.eq(n);
+            var $nextItem = this.items.eq(n+1);
 
-            this.items.removeClass(this.settings.current)
-            .eq(n).addClass(this.settings.current);
+            $allTarget.removeClass(this.settings.current);
+            $curTarget.addClass(this.settings.current);
 
-            if ( !this._supportCSS3Transition ) {
+            if ( !this.supportTransition ) {
                 this.items.fadeOut()
                 .eq(n).fadeIn();
             }
 
+            // 后加载
+            if ( this.settings.lazyload && !$currItem.data('data-loaded') ) {
+                this.loadImages($currItem);
+            }
+
+            // 预加载
+            if ( this.settings.preload && !$nextItem.data('data-loaded') ) {
+                this.loadImages($nextItem);
+            }
 
             this.settings.onSwitch.call(this, n);
-
-            if ( this.settings.lazyload ) {
-                this.loadImages(this.items.eq(n));
-            }
         },
 
         start: function() {
@@ -211,6 +219,8 @@
         loadImages: function($el) {
             var lazyImgAttr = this.settings.lazyload;
             var $imgs = $el.find('['+ lazyImgAttr +']');
+
+            $el.data('data-loaded', '1');
 
             $imgs.each(function() {
                 var originSrc = $(this).attr(lazyImgAttr);
