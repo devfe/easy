@@ -2,12 +2,31 @@ extends ../assets/layout
 
 block style
   link(type="text/css", rel="stylesheet", href="./#{name}.css")
-
+  style.
+    .ECarousel .ECarousel-item a {
+      display:block;
+      width:50px;
+      height:50px;
+      line-height: 50px;
+      text-align: center;
+      border: 1px solid #666;
+      background: #eee;
+    }
 block content
 
   fieldset
     legend Normal
     .demo
+      .ECarousel
+          ul.ECarousel-body(data-carouse="body")
+            each item,k in [0,1,2,3,4,5,6,7,8,9]
+              li.ECarousel-item(data-carouse="item")
+                a(href="#none", style="") #{k}
+        .ECarousel-ctrl
+          a(data-carouse="prev") &lt;
+          a(data-carouse="next") &gt;
+        
 
 block localScript
   script.
+    $('.ECarousel').ECarousel();

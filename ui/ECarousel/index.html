@@ -5,16 +5,43 @@
     <meta charset="utf-8">
     <link rel="stylesheet" type="text/css" href="../assets/plugins.css">
     <link type="text/css" rel="stylesheet" href="./ECarousel.css">
+    <style>
+      .ECarousel .ECarousel-item a {
+        display:block;
+        width:50px;
+        height:50px;
+        line-height: 50px;
+        text-align: center;
+        border: 1px solid #666;
+        background: #eee;
+      }
+    </style>
   </head>
   <body>
     <div class="nav"><strong><a href="/">Easy UI</a></strong>&nbsp;»</div><br><br>
     <fieldset>
       <legend>Normal</legend>
-      <div class="demo"></div>
+      <div class="demo">
+        <div class="ECarousel">
+          <ul data-carouse="body" class="ECarousel-body">
+            <li data-carouse="item" class="ECarousel-item"><a href="#none" style="">0</a></li>
+            <li data-carouse="item" class="ECarousel-item"><a href="#none" style="">1</a></li>
+            <li data-carouse="item" class="ECarousel-item"><a href="#none" style="">2</a></li>
+            <li data-carouse="item" class="ECarousel-item"><a href="#none" style="">3</a></li>
+            <li data-carouse="item" class="ECarousel-item"><a href="#none" style="">4</a></li>
+            <li data-carouse="item" class="ECarousel-item"><a href="#none" style="">5</a></li>
+            <li data-carouse="item" class="ECarousel-item"><a href="#none" style="">6</a></li>
+            <li data-carouse="item" class="ECarousel-item"><a href="#none" style="">7</a></li>
+            <li data-carouse="item" class="ECarousel-item"><a href="#none" style="">8</a></li>
+            <li data-carouse="item" class="ECarousel-item"><a href="#none" style="">9</a></li>
+          </ul>
+        </div>
+        <div class="ECarousel-ctrl"><a data-carouse="prev">&lt;</a><a data-carouse="next">&gt;</a></div>
+      </div>
     </fieldset>
     <div class="clr"></div>
     <script src="../assets/jquery-1.6.4.js"></script>
     <script src="../E/ui/ECarousel//ECarousel.js"></script>
-    <script></script>
+    <script>$('.ECarousel').ECarousel();</script>
   </body>
 </html>

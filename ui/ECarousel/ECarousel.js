@@ -1,5 +1,5 @@
 /* ------------------------------------------------------------------------
- * @Name: Plugins
+ * @Name: ECarousel
  * @Author: keelii
  * @Version: 1.0.0
  * ------------------------------------------------------------------------
@@ -8,8 +8,8 @@
 
 (function ($, window, document) {
     'use strict';
-    // 插件名称：新建插件全局替换字符 Plugins 即可
-    var EPluginName = 'Plugins';
+    // 插件名称：新建插件全局替换字符 ECarousel 即可
+    var EPluginName = 'ECarousel';
 
     // 插件版本
     var EPluginVersion = '@VERSION';
@@ -18,10 +18,21 @@
 
     // 插件参数默认值
     var defaults = {
-        propertyName: 'value'
+        event: 'click',
+        loop: false,
+        visible: 1,
+        step: 1,
+        disable: 'disabled'
+        // 用来区域前进后退不可用状态 prev-disabled/next-disabled
+        disablePrefix: 'prev-',
+        selector: {
+            body: '[data-carouse="body"]',
+            item: '[data-carouse="item"]',
+            ctrl: '[data-carouse="ctrl"]',
+        }
     };
 
-    function Plugins($element, options) {
+    function ECarousel($element, options) {
         this.$el = $element;
 
         this.settings = $.extend(true, {}, defaults, options) ;
@@ -32,8 +43,38 @@
         this.init();
     }
 
-    Plugins.prototype = {
+    ECarousel.prototype = {
         init: function() {
+            this.$body = this.$el.find(this.settings.selector.body);
+            this.$item = this.$el.find(this.settings.selector.item);
+            this.$ctrl = this.$el.find(this.settings.selector.ctrl);
+
+            var visible = this.settings.visible;
+            var step    = this.settings.step;
+            var len     = this.$item.length;
+
+            // 步子迈太大
+            if ( step > visible ) {
+                throw new Error('Step should not more than visible.');
+                return 0;
+            }
+
+            // 不用初始化
+            if ( visible <= len ) {
+                return 0;
+            }
+
+            this.bindEvent();
+            this.prepare();
+        },
+
+        // 绑定事件
+        bindEvent: function () {
+
+        },
+
+        // 计算滚动范围，尺寸等
+        prepare: function () {
 
         },
 
@@ -54,7 +95,7 @@
             return this.each(function () {
                 $(this).data('Eguid', $.fn[EPluginName + '_guid']++);
 
-                var EPluginInstance = new Plugins($(this), options);
+                var EPluginInstance = new ECarousel($(this), options);
 
                 if ( !$(this).data(EPluginName) ) {
                     $(this).data(EPluginName, EPluginInstance);

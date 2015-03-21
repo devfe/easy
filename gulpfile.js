@@ -10,6 +10,7 @@ var connect = require('gulp-connect');
 var jade    = require('gulp-jade');
 var sass    = require('gulp-sass');
 var uglify  = require('gulp-uglify');
+var minifyCSS = require('gulp-minify-css');
 
 // build
 var concat     = require('gulp-concat');
@@ -22,6 +23,9 @@ var jshint       = require('gulp-jshint');
 var packageJSON  = require('./package');
 var jshintConfig = packageJSON.jshintConfig;
 
+// notify
+var notify = require("gulp-notify");
+
 // test images
 var testData     = require('./test/data');
 
@@ -29,6 +33,8 @@ var DIR          = require('./dir.js');
 var UI_CONFIG_LIST   = require('./config.js');
 
 var COMBO_VERSION = '1.1.0';
+
+var buildComboDir = DIR.build.combo.replace('{VERSION}', COMBO_VERSION);
 
 var BANNER       = '\
 /*=> <%= name %>\n\
@@ -41,18 +47,40 @@ var BANNER_COMBO = '\
  * @date    <%= date %>\n\
  * ------------------------------------------------------------------------ */\n';
 
- var timeString = (function() {
-     var now = new Date();
-     var template = '{Y}-{M}-{D} {h}:{m}:{s}';
-     var timeString = template.replace('{Y}', now.getFullYear())
-                     .replace('{M}', now.getMonth() + 1)
-                     .replace('{D}', now.getDate())
-                     .replace('{h}', now.getHours())
-                     .replace('{m}', now.getMinutes())
-                     .replace('{s}', now.getSeconds());
+var timeString = (function() {
+    var now = new Date();
+    var template = '{Y}-{M}-{D} {h}:{m}:{s}';
+    var timeString = template.replace('{Y}', now.getFullYear())
+                    .replace('{M}', now.getMonth() + 1)
+                    .replace('{D}', now.getDate())
+                    .replace('{h}', now.getHours())
+                    .replace('{m}', now.getMinutes())
+                    .replace('{s}', now.getSeconds());
 
     return timeString;
- })();
+})();
+
+gulp.task('concat_css', function () {
+    var styles = [];
+
+    UI_CONFIG_LIST.forEach(function (ui) {
+        if ( ui.hasCSS ) {
+            var style = path.join(DIR.ui, ui.name, ui.name + '.css');
+            styles.push(style);
+        }
+    });
+    gulp.src(DIR.css)
+        .pipe(concat('easy.css'))
+        .pipe(sourcemaps.init())
+        .pipe(minifyCSS())
+        .pipe(header(BANNER_COMBO, {
+            version: COMBO_VERSION,
+            date: timeString
+        }))
+        .pipe(sourcemaps.write('./'))
+        .pipe(gulp.dest(buildComboDir));
+
+});
 
 gulp.task('rebuild_dir', function() {
     var configContent = '';
@@ -149,7 +177,6 @@ gulp.task('compress_js', function() {
 });
 
 gulp.task('concat_js', function () {
-    var buildComboDir = DIR.build.combo.replace('{VERSION}', COMBO_VERSION);
 
     gulp.src(DIR.script)
        .pipe(concat('easy.js'))
@@ -233,4 +260,4 @@ gulp.task('server', function() {
 });
 
 gulp.task('dev', ['watch', 'server', 'compile_sass', 'compile_jade']);
-gulp.task('build', ['compress_js', 'concat_js']);
+gulp.task('build', ['compress_js', 'concat_js', 'concat_css']);
