@@ -3,6 +3,14 @@ extends ../assets/layout
 block style
   link(type="text/css", rel="stylesheet", href="./#{name}.css")
   style.
+    ul {
+      margin: 0;
+    }
+    .ECarousel-wrap {
+      margin:0 35px;
+      border: 5px solid #eee;
+      border-radius: 5px;
+    }
     .ECarousel .ECarousel-item a {
       display:block;
       width:50px;
@@ -12,21 +20,54 @@ block style
       border: 1px solid #666;
       background: #eee;
     }
+    .ECarousel-ctrl a {
+      display:block;
+      background:#000;
+      color:#fff;
+      height:30px;
+      width:30px;
+      text-align:center;
+      line-height:30px;
+    }
+    .ECarousel-ctrl .next-disabled,.ECarousel-ctrl .prev-disabled {
+      background:#eee;
+    }
+    .ECarousel-pager { margin-left: 50px; }
+    .ECarousel-pager a {
+      display:block;
+      padding: 3px 6px;
+      background:#000;
+      float:left; margin-right: 10px;
+      color:#fff;
+    }
+    .ECarousel-pager .current {
+      background:#fc0;
+    }
 block content
 
   fieldset
     legend Normal
     .demo
       .ECarousel
+        .ECarousel-wrap(data-carouse="wrap")
           ul.ECarousel-body(data-carouse="body")
             each item,k in [0,1,2,3,4,5,6,7,8,9]
               li.ECarousel-item(data-carouse="item")
                 a(href="#none", style="") #{k}
         .ECarousel-ctrl
-          a(data-carouse="prev") &lt;
-          a(data-carouse="next") &gt;
-        
+          a(href="#none", data-carouse="prev", class="prev-disaxbled") &lt;
+          a(href="#none", data-carouse="next") &gt;
+        .ECarousel-pager
+           
+    br
+    br    
 
 block localScript
   script.
-    $('.ECarousel').ECarousel();
+    $('.ECarousel').ECarousel({
+      loop: true,
+      visible:5,
+      step:3,
+      debug: true,
+      pager: 'ECarousel-pager'
+    });

@@ -1,5 +1,26 @@
 .ECarousel {
+
+
     .ECarousel-item {
         float: left;
+    }
+    .ECarousel-wrap {
+        position:relative;
+    }
+    .ECarousel-body {
+        position: absolute;
+        left: 0;
+        top: 0;
+
+        transition:left 0.5s ease;
+        -webkit-transition:left 0.5s ease;
+        -moz-transition:left 0.5s ease;
+        -o-transition:left 0.5s ease;
+    }
+
+    .ECarousel-ctrl {
+        position: absolute;
+        top: 50%;
+        z-index: 1;
     }
 }
