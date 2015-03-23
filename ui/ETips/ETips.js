@@ -28,6 +28,7 @@
 
         this._defaults = defaults;
         this._name = EPluginName;
+        this._version  = EPluginVersion;
 
         this.init();
     }

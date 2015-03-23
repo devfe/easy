@@ -77,6 +77,7 @@
 
         this._defaults = defaults;
         this._name     = EPluginName;
+        this._version  = EPluginVersion;
         this._guid     = $element.data('Eguid');
 
         this.init();
