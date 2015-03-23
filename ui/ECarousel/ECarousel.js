@@ -22,6 +22,8 @@
         loop: false,
         visible: 1,
         step: 1,
+        auto: false,
+        direction: 'x',
         debug: false,
         // 用来区域前进后退不可用状态 prev-disabled/next-disabled
         prevDisable: 'prev-disabled',
@@ -33,6 +35,7 @@
         height: null,
         pager: null,
         pagerCurrent: 'current',
+        pagerEvent: 'click',
         pagerTPL: '<a href="#none" class="cName" data-carouse="page">{n}</a>',
         selector: {
             wrap: '[data-carouse="wrap"]',
@@ -50,7 +53,7 @@
         this.settings = $.extend(true, {}, defaults, options) ;
 
         this._defaults = defaults;
-        this._name = EPluginName;
+        this._name     = EPluginName;
         this._version  = EPluginVersion;
 
         this.init();
@@ -64,6 +67,7 @@
             this.$wrap = this.$el.find(this.settings.selector.wrap);
             this.$body = this.$el.find(this.settings.selector.body);
             this.$item = this.$el.find(this.settings.selector.item);
+            this.$pages = this.$el.find(this.settings.selector.page);
 
             // 按钮元素可以不依赖dom
             this.$prev = typeof sPrev === 'string'
@@ -110,8 +114,17 @@
             // current frame
             this.current = 0;
 
+            this.timer = null;
+
+            this.$el.addClass('ECarousel-dir-' + this.settings.direction);
+
             this.prepare(meta);
             this.bindEvent();
+
+            if ( this.settings.auto ) {
+                this.settings.loop = true;
+                this.start();
+            }
         },
 
         // 绑定事件
@@ -123,28 +136,54 @@
             .bind(evt, function () {
                 _this.prev();
             });
+
             this.$next.unbind(evt)
             .bind(evt, function () {
                 _this.next();
             });
+
+            if ( this.settings.pager ) {
+                this.$el.undelegate(this.settings.pagerEvent)
+                .delegate(
+                this.settings.selector.page,
+                this.settings.pagerEvent,
+                function () {
+                    _this.handlePager( $(this) );
+                });
+            }
         },
 
         // 计算滚动范围，尺寸等
         prepare: function (m) {
+            var isX = this.settings.direction === 'x';
+
+            var wrapWidth = isX ? m.w * m.v : m.w;
+            var wrapHeight = isX ? m.h : m.h * m.v
+
+            var bodyWidth = isX ? m.w * m.l : m.w;
+            var bodyHeight = isX ? m.h : m.h * m.l;
+
             this.$wrap.css({
-                width: m.w * m.v,
-                height: m.h,
+                width: wrapWidth,
+                height: wrapHeight,
                 overflow: 'hidden'
             });
 
             this.$body.css({
-                width: m.w * m.l,
-                height: m.h
+                width: bodyWidth,
+                height: bodyHeight
             });
 
-            if ( this.settings.pager ) {
+            if ( this.settings.pager
+                && this.$el.find(this.settings.selector.page).length < 1 ) {
                 this.renderPager(this.total);
             }
+        },
+
+        handlePager: function ($ele) {
+            var index = this.$pages.index( $ele );
+
+            this.go(index);
         },
         renderPager: function (n) {
             var i = 0;
@@ -152,14 +191,22 @@
 
             this.$pager = this.$el.find('.' + this.settings.pager);
 
-            while ( i < n ) {
+            while ( i <= n ) {
                 var cName = i === 0 ? 'current' : '';
                 result.push(this.settings.pagerTPL.replace(/\{n\}/g, i+1).replace('cName', cName));
                 i++;
             }
-            console.log(result)
             this.$pager.append(result.join(''));
+
+            this.$pages = this.$el.find(this.settings.selector.page);
         },
+        setPagerStatus: function (n) {
+            var cName = this.settings.pagerCurrent;
+
+            this.$pages.removeClass(cName);
+            this.$pages.eq(n).addClass(cName);
+        },
+
         // 上一帧
         prev: function () {
             if ( this.settings.loop ) {
@@ -197,15 +244,36 @@
             this.go(this.current);
         },
 
+        start: function () {
+            var _this = this;
+            var interval = typeof this.settings.auto === 'number'
+                ? this.settings.auto
+                : 5000;
+
+            this.timer = setInterval(function () {
+                _this.$next.trigger(_this.settings.event);
+            }, interval);
+        },
+
         go: function(n) {
-            this.$body.css({
-                left: - this.m.w * n * this.m.s
-            });
+            var css = this.settings.direction === 'x'
+                ? { left: - this.m.w * n * this.m.s }
+                : { top: - this.m.w * n * this.m.s }
+
+            this.current = n;
+
+            this.$body.css(css);
 
             if ( !this.settings.loop ) {
                 this.setDisabled(n);
             }
-            console.log('Switch to:' + n + ' in ' + this.total + ' frame');
+            if ( this.settings.pager ) {
+                this.setPagerStatus(n);
+            }
+
+            if ( this.settings.debug ) {
+                console.log('Switch to:' + n + ' in ' + this.total + ' frame');
+            }
         },
         // 上一帧
         setDisabled: function (n) {

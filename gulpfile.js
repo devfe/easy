@@ -97,7 +97,7 @@ function compileJade(ui) {
     var jadeFilePath   = path.join(DIR.ui, ui.name, 'index.jade');
 
     if ( fs.existsSync(configFilePath) && fs.existsSync(jadeFilePath) ) {
-        var config = require(configFilePath);
+        var config = require('./' + configFilePath);
 
         config.imgs = testData.imgs;
         config.slides = testData.slides;

@@ -58,16 +58,53 @@ block content
           a(href="#none", data-carouse="prev", class="prev-disaxbled") &lt;
           a(href="#none", data-carouse="next") &gt;
         .ECarousel-pager
+  fieldset
+    legend Auto: true
+    .demo  
+      .ECarousel
+        .ECarousel-wrap(data-carouse="wrap")
+          ul.ECarousel-body(data-carouse="body")
+            each item,k in [0,1,2,3,4,5,6,7,8,9]
+              li.ECarousel-item(data-carouse="item")
+                a(href="#none", style="") #{k}
+        .ECarousel-ctrl
+          a(href="#none", data-carouse="prev", class="prev-disaxbled") &lt;
+          a(href="#none", data-carouse="next") &gt;
+        .ECarousel-pager
+  fieldset
+    legend Direction: y
+    .demo  
+      .ECarousel
+        .ECarousel-wrap(data-carouse="wrap")
+          ul.ECarousel-body(data-carouse="body")
+            each item,k in [0,1,2,3,4,5,6,7,8,9]
+              li.ECarousel-item(data-carouse="item")
+                a(href="#none", style="") #{k}
+        .ECarousel-ctrl
+          a(href="#none", data-carouse="prev", class="prev-disaxbled") &lt;
+          a(href="#none", data-carouse="next") &gt;
+        .ECarousel-pager  
            
     br
     br    
 
 block localScript
   script.
-    $('.ECarousel').ECarousel({
+    $('.ECarousel').eq(0).ECarousel({
       loop: true,
       visible:5,
       step:3,
       debug: true,
       pager: 'ECarousel-pager'
     });
+    $('.ECarousel').eq(1).ECarousel({
+      visible:1,
+      step:1,
+      pager: 'ECarousel-pager',
+      auto: 1000
+    });  
+    $('.ECarousel').eq(2).ECarousel({
+      direction: 'y',
+      pager: 'ECarousel-pager',
+      auto: 1000
+    });       
