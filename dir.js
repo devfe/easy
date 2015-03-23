@@ -1,5 +1,5 @@
 module.exports = {
-    ui         : './ui',
+    ui         : './ui/',
     assets     : './ui/assets',
     scss       : './ui/*/*.scss',
     css        : ['./ui/*/*.css', '!./ui/assets/*.css'],

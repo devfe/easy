@@ -17,6 +17,7 @@ var minifyCSS = require('gulp-minify-css');
 var concat     = require('gulp-concat');
 var rename     = require('gulp-rename');
 var header     = require('gulp-header');
+var replace    = require('gulp-replace');
 var sourcemaps = require('gulp-sourcemaps');
 
 // check
@@ -43,7 +44,7 @@ var BANNER       = '\
 
 var BANNER_COMBO = '\
 /* ------------------------------------------------------------------------\n\
- * Easy UI Copyright 2015-2015 @ JD, Inc. Licensed under MIT\n\
+ * Easy UI GPL v3 license. © 2015 JD Inc.\n\
  * @version <%= version %>\n\
  * @date    <%= date %>\n\
  * ------------------------------------------------------------------------ */\n';
@@ -60,6 +61,36 @@ var timeString = (function() {
 
     return timeString;
 })();
+
+
+function compressJS(ui) {
+    var currentDir  = path.join(DIR.ui, ui.name);
+    var currentFile = path.join(DIR.ui, ui.name, ui.name + '.js');
+    var destDir     = path.join(DIR.build.ui, ui.name, ui.version);
+
+    gulp.src(currentFile)
+        .pipe(sourcemaps.init())
+        // .pipe(replace(/\@VERSION/g, ui.version))
+        .pipe(uglify({
+            compress: {
+                global_defs: {
+                    // DEBUG: true
+                },
+                // drop_console: true
+            },
+            output: {
+                ascii_only: true,
+            },
+            outSourceMap: path.join(destDir, ui.name + '.js.map'),
+            sourceRoot: path.join(DIR.release, ui.name)
+        }))
+        .pipe(header(BANNER, {
+            name: ui.name,
+            date: timeString
+        }))
+        .pipe(sourcemaps.write('./'))
+        .pipe(gulp.dest(destDir));
+}
 
 gulp.task('concat_css', function () {
     var styles = [];
@@ -143,37 +174,26 @@ gulp.task('rebuild_dir', function() {
     });
 });
 
-gulp.task('compress_js', function() {
-    function compress(ui) {
-        var currentDir  = path.join(DIR.ui, ui.name);
-        var currentFile = path.join(DIR.ui, ui.name, ui.name + '.js');
-        var destDir     = path.join(DIR.build.ui, ui.name, ui.version);
+gulp.task('compress', function () {
+    var file = process.argv[4];
+    var ext = path.extname(file);
+    var basename = path.basename(file, ext);
 
-        gulp.src(currentFile)
-            .pipe(sourcemaps.init())
-            .pipe(uglify({
-                compress: {
-                    global_defs: {
-                        // DEBUG: true
-                    },
-                    // drop_console: true
-                },
-                output: {
-                    ascii_only: true,
-                },
-                outSourceMap: path.join(destDir, ui.name + '.js.map'),
-                sourceRoot: path.join(DIR.release, ui.name)
-            }))
-            .pipe(header(BANNER, {
-                name: ui.name,
-                date: timeString
-            }))
-            .pipe(sourcemaps.write('./'))
-            .pipe(gulp.dest(destDir));
-    }
+    var result;
 
     UI_CONFIG_LIST.forEach(function (ui) {
-        compress(ui);
+        if ( ui.name === basename ) {
+            result = ui;
+            return false;
+        }
+    });
+    
+    compressJS(result);
+});
+
+gulp.task('compress_js', function() {
+    UI_CONFIG_LIST.forEach(function (ui) {
+        compressJS(ui);
     });
 });
 
