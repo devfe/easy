@@ -70,7 +70,7 @@ function compressJS(ui) {
 
     gulp.src(currentFile)
         .pipe(sourcemaps.init())
-        // .pipe(replace(/\@VERSION/g, ui.version))
+        .pipe(replace(/@VERSION/g, ui.version))
         .pipe(uglify({
             compress: {
                 global_defs: {
@@ -90,6 +90,24 @@ function compressJS(ui) {
         }))
         .pipe(sourcemaps.write('./'))
         .pipe(gulp.dest(destDir));
+}
+
+function compileJade(ui) {
+    var configFilePath = path.join(DIR.ui, ui.name, 'config.json');
+    var jadeFilePath   = path.join(DIR.ui, ui.name, 'index.jade');
+
+    if ( fs.existsSync(configFilePath) && fs.existsSync(jadeFilePath) ) {
+        var config = require(configFilePath);
+
+        config.imgs = testData.imgs;
+        config.slides = testData.slides;
+        gulp.src(jadeFilePath)
+            .pipe(jade({
+                locals: config,
+                pretty: true
+            }))
+            .pipe(gulp.dest(path.join(DIR.ui, config.name)));
+    }
 }
 
 gulp.task('concat_css', function () {
@@ -187,7 +205,7 @@ gulp.task('compress', function () {
             return false;
         }
     });
-    
+
     compressJS(result);
 });
 
@@ -218,31 +236,11 @@ gulp.task('concat_js', function () {
 });
 
 gulp.task('compile_jade', function() {
-    var dirs = fs.readdirSync(DIR.ui);
 
-    function compileJade(jadePath, data) {
-        data.imgs   = testData.imgs;
-        data.slides = testData.slides;
-        gulp.src(jadePath)
-            .pipe(jade({
-                locals: data,
-                pretty: true
-            }))
-            .pipe(gulp.dest(path.join(DIR.ui, data.name)))
-    }
-
-    dirs.forEach(function(file) {
-        var configFilePath = path.join(DIR.ui, file, 'config.json');
-        var jadeFilePath   = path.join(DIR.ui, file, 'index.jade');
-
-        if (/^E/.test(file) && fs.existsSync(configFilePath) && fs.existsSync(jadeFilePath)) {
-            var config = require('./' + configFilePath);
-
-            compileJade(jadeFilePath, config);
-        } else {
-            console.log('config file not found.' + file)
-        }
+    UI_CONFIG_LIST.forEach(function (ui) {
+        compileJade(ui);
     });
+
 });
 
 gulp.task('compile_sass', function() {
@@ -260,34 +258,20 @@ gulp.task('lint', function() {
         .pipe(jshint.reporter('default'));
 });
 
-gulp.task('default', function() {
-    gulp.src(DIR.script)
-        .pipe(jshint())
-        .pipe(jshint.reporter('default'));
-});
-
+// 监控文件变化，实时编译模板文件
 gulp.task('watch', function() {
     gulp.watch(DIR.jade2watch, ['compile_jade']);
 
     gulp.watch(DIR.scss, ['compile_sass']);
 });
 
+// 启动本地服务器
 gulp.task('server', function() {
     connect.server({
         port: 1024,
         root: [DIR.ui, './build'],
         livereload: false
     });
-});
-
-gulp.task('sync', function () {
-  browserSync({
-    // proxy: 'localhost:3000',
-    server: {
-         baseDir: './ui'
-    },
-    files: ['./**/*.{js,css}']
-  });
 });
 
 gulp.task('dev', ['watch', 'server', 'compile_sass', 'compile_jade']);
