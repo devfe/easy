@@ -20,7 +20,7 @@ module.exports = [{
     hasCSS: true
 },{
     name: 'ECarousel',
-    version: '',
+    version: '1.0.1',
     hasCSS: true
 },{
     name: 'ETips',
