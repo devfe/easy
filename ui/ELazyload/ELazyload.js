@@ -90,17 +90,25 @@
             this.settings.onReady.call(this);
         },
 
+        // 判断是否支持dataURI，避免在个别IE浏览器里面循环触发onerror事件产生stack overflow at line 0的错误
+        supportDataURI: function(fn) {
+            // 如果已经检测过直接返回缓存值
+            if ( this.isSupportDataURI ) {
+                return fn(this.isSupportDataURI);
+            }
+
+            var data = new Image();
+            data.onload = data.onerror = function(){
+                var index = this.width === 1 && this.height === 1 ? 1 : 0;
+
+                this.isSupportDataURI = index;
+                fn(index);
+            };
+            data.src = this.settings.placeholder[1];
+        },
+
         bindEvent: function($img) {
             var _this = this;
-
-            // 判断是否支持dataURI，避免在个别IE浏览器里面循环触发onerror事件产生stack overflow at line 0的错误
-            function supportDataURI(fn) {
-                var data = new Image();
-                data.onload = data.onerror = function(){
-                    fn(this.width === 1 && this.height === 1 ? 1 : 0);
-                };
-                data.src = _this.settings.placeholder[1];
-            }
 
             if ( $img && this.settings.type === 'img' ) {
                 $img.get(0).onload = function() {
@@ -114,8 +122,11 @@
                     $img.data('loaded', false);
 
                     // 防止浏览器展示默认的图片失败样式
-                    supportDataURI(function(support) {
-                        $img.attr('src', _this.settings.placeholder[support]);
+                    _this.supportDataURI(function(support) {
+                        var placeholder = _this.settings.placeholder[support];
+                        $img.attr('src', placeholder);
+
+                        _this.placeholder = placeholder;
                     });
 
                     _this.settings.onError.call(_this, $img);
@@ -130,13 +141,17 @@
 
         // 加载完成事件句柄
         onLoad: function($ele) {
+            var src = $ele.attr('src');
+            if ( src !== this.settings.placeholder[0]
+                && src !== this.settings.placeholder[1]) {
 
-            $ele.removeClass(this.settings.loadingClass);
-            $ele.data('loaded', true);
+                $ele.removeClass(this.settings.loadingClass);
+                $ele.data('loaded', true);
 
-            this.loaded.push(1);
+                this.loaded.push(1);
 
-            this.settings.onLoad.call(this, $ele);
+                this.settings.onLoad.call(this, $ele);
+            }
         },
 
         // 页面滚动时添加节流逻辑
@@ -207,6 +222,10 @@
             // 重置查询范围
             this.$targets = $imgsUnloaded;
 
+            if ( !this.placeholderAdded ) {
+                this.setDefaultPlaceholder($imgsUnloaded);
+            }
+
             if ( this.settings.debug ) {
                 console.log( 'Total:' + this.total
                             + '\u3000 current:' + $images.length
@@ -223,6 +242,24 @@
             }
         },
 
+        // 设置默认的占位图片
+        setDefaultPlaceholder: function($ele) {
+            var _this = this;
+
+            this.supportDataURI(function (support) {
+                var placeholder = _this.settings.placeholder[support];
+
+                var i = 0, len = $ele.length;
+                while (i < len) {
+                    console.log($ele);
+                    $ele.get(i).setAttribute('src', placeholder);
+                    i++;
+                }
+
+                _this.placeholderAdded = true;
+            });
+        },
+
         // 插入点位元素，计算出隐藏元素的大概位置
         insertHolder: function($ele) {
             if ( this.settings.type !== 'img' ) {
@@ -235,10 +272,15 @@
 
         // 高级浏览器支持元素坐标方法
         supportClientRect: function () {
+            if ( typeof this.isSupportClientRect !== 'undefined' ) {
+                return this.isSupportClientRect;
+            }
+
             var div = document.createElement('div');
             var support = 'getBoundingClientRect' in div;
 
             div = null;
+            this.isSupportClientRect = support;
             return support;
         },
 
