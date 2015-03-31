@@ -3,7 +3,7 @@
  * @Author: keelii
  * @Version: 1.0.0
  * ------------------------------------------------------------------------
- * Copyright 2015-2015 JD, Inc. Licensed under MIT
+ * GPL v3 license. © 2015 JD Inc.
  * ------------------------------------------------------------------------ */
 
 (function ($, window, document) {
@@ -253,6 +253,10 @@
             this.timer = setInterval(function () {
                 _this.$next.trigger(_this.settings.event);
             }, interval);
+        },
+
+        stop: function () {
+            clearInterval(this.timer);
         },
 
         go: function(n) {
