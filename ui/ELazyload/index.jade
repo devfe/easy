@@ -41,8 +41,8 @@ block localScript
     $('.mod').ELazyload({
       type: 'module',
       onAppear: function() {
-        console.log('Module appear...');
-        console.log(this.$el.get(0));
+        //- console.log('Module appear...');
+        //- console.log(this.$el.get(0));
         if ( !this.$el.is(':visible') ) {
           this.$el.fadeIn();
         }
@@ -52,9 +52,9 @@ block localScript
       debug: false,
       threshold: 0,
       onComplete: function() {
-        console.log('Images All loaded complated.');
+        //- console.log('Images All loaded complated.');
       },
       onAppear: function($img) {
-        console.log($img.get(0));
+        //- console.log($img.get(0));
       }
     });

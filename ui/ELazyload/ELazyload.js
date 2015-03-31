@@ -251,7 +251,6 @@
 
                 var i = 0, len = $ele.length;
                 while (i < len) {
-                    console.log($ele);
                     $ele.get(i).setAttribute('src', placeholder);
                     i++;
                 }
