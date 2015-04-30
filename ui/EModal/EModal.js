@@ -16,30 +16,34 @@
 
     var emptyFunction = function() {};
 
-    /*
-
-
-
-    */
-
     var wrap = '\
-        <div id="{id}" class="EModal" data-role="EModal">\
-            <div class="EModal-title">{title}</div>\
-            <div class="EModal-content">{content}</div>\
-        </div>';
+        ';
 
 
     // 插件参数默认值
     var defaults = {
         id: null,
         type: 'html',
+        title: null,
         content: '',
+        btnOkText: '确定',
+        btnCancelText: '取消',
         hasOverLay: true,
         template: {
-            title: '提示',
-            wrap: wrap,
-            overLay: '<div data-modal="overlay"></div>',
-            iframe: '<iframe src="{src}" marginwidth="0" marginheight="0" frameborder="0" scrolling="no"></iframe>'
+            wrap    : '<div id="{id}" class="EModal" data-role="EModal"></div>',
+            title   : '<div class="EModal-title">{title}</div>',
+            content : '<div class="EModal-content">{content}</div>',
+            alert   : '\
+                <div class="EModal-ctl">\
+                    <a href="#none" data-modal="ok" class="EModal-btn EModal-ok">{btnOkText}</a>\
+                </div>',
+            confirm : '\
+                <div class="EModal-ctl">\
+                    <a href="#none" data-modal="ok" class="EModal-btn EModal-ok">{btnOkText}</a>\
+                    <a href="#none" data-modal="cancel" class="EModal-btn EModal-cancel">{btnCancelText}</a>\
+                </div>',
+            overLay : '<div class="EModal-overlay" data-modal="overlay"></div>',
+            iframe  : '<iframe src="{src}" marginwidth="0" marginheight="0" frameborder="0" scrolling="no"></iframe>'
         },
         selector: {
             trigger : '[data-modal="trigger"]',
@@ -69,40 +73,57 @@
 
     EModal.prototype = {
         init: function() {
-            var selector = this.settings.selector;
+            var settings     = this.settings;
+            var selector     = settings.selector;
+            var template     = settings.template;
 
-            this.$body = $('body');
+            var BTN_OK       = 'btnOkText';
+            var BTN_CANCEL   = 'btnCancelText';
 
-            this.$trigger = $(selector.trigger);
+            this.$body       = $('body');
 
-            this.bindEvent();
+            this.$trigger    = $(selector.trigger);
+            this.$overlay    = $(settings.template.overlay);
+
+            template.alert   = template.alert.replace('{'+ BTN_OK +'}', settings[BTN_OK]);
+            template.confirm = template.confirm
+                .replace('{'+ BTN_CANCEL +'}', settings[BTN_CANCEL])
+                .replace('{'+ BTN_OK +'}', settings[BTN_OK]);
+
+            // 已经存在元素/重复初始化 > 报错
+            if ( $(settings.id).length ) {
+                throw new Error('There is another element called ' + settings.id, 'Please change one.');
+            } else {
+                this.bindEvent();
+            }
 
         },
 
         render: function () {
-            var hasOverLay = $('[data-modal="overlay"]').length > 0;
+            var settings   = this.settings;
+            var template   = settings.template;
 
-            if ( this.settings.hasOverLay && !hasOverLay ) {
+            var id         = id || 'EModal-' + this._guid;
+            var hasOverLay = $(settings.selector.overlay).length;
+
+            // 遮罩层只需要插入一个
+            if ( settings.hasOverLay && !hasOverLay ) {
                 this.$overLay.appendTo( this.$body );
             }
 
-            // 已经存在元素/重复初始化 > 报错
-            if ( $(this.settings.id).length > 0 ) {
-                throw new Error('There is another element called ' + this.settings.id, 'Please change one.');
+            var $model  = $(template.wrap.replace('{id}', id));
+            var title   = template.title.replace('{title}', settings.title);
+            var content = this.getContent(settings.type);
+
+            if ( settings.title ) {
+                $model.append(title);
             }
 
-            var id      = id || 'EModal-' + this._guid;
+            $model.append(content);
 
-            var result  = this.template.wrap.replace('{id}', id);
-            var title   = this.template.title;
-            var content = this.getContent(this.settings.type);
+            this.$body.append($model);
 
-            result = result.replace('{title}', title);
-            result = result.replace('{content}', content);
-
-            this.$body.append(result);
-
-            this.$modal = $(id);
+            this.$modal = $model;
 
             this.bindEvent(this.$modal);
         },
@@ -140,11 +161,19 @@
         },
 
         getContent: function () {
-            var s = this.settings;
-            var result = s.content;
+            var settings = this.settings;
+            var template = settings.template;
+
+            var result = template.content;
+
+            // result = result.replace('{content}', settings.content);
 
             if ( type === 'iframe' ) {
-                result = s.template.iframe.replace('{src}', s.content);
+                result = settings.template.iframe.replace('{src}', settings.content);
+            }
+
+            if ( type === 'alert' ) {
+                result = 0;
             }
 
             return result;
