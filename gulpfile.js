@@ -1,3 +1,4 @@
+/// <reference path="typings/node/node.d.ts"/>
 var fs   = require('fs');
 var path = require('path');
 
