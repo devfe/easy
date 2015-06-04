@@ -13,10 +13,13 @@ block content
 
 block localScript
   script.
-    $('.EModal-0').EModal({
-      type: 'confirm',
-      title: '哈哈',
-      btnOkText: 'ok',
-      btnCancelText: 'cancel',
-      content: '这<br>里<br>面<br>是<br>内<br>容'
+    $(function() {
+      $('.EModal-0').EModal({
+        type: 'confirm',
+        title: '哈哈',
+        btnOkText: 'ok',
+        btnCancelText: 'cancel',
+        content: '这<br>里<br>面<br>是<br>内<br>容'
+      });
     });
+

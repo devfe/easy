@@ -30,35 +30,39 @@
         btnCancelText: '取消',
         hasOverLay: true,
         template: {
-            wrap    : '<div id="{id}" class="EModal" data-role="EModal">{title}{content}{button}{countdown}</div>',
-            title   : '<div class="EModal-title"><strong>{title}</strong><span data-modal="close"> x </span></div>',
-            content : '<div class="EModal-content">{content}</div>',
-            alert   : '\
+            wrap     : '<div id="{id}" class="EModal" data-role="EModal">{title}{content}{button}{countdown}</div>',
+            title    : '\
+                <div class="EModal-title">\
+                    <strong>{title}</strong>\
+                    <span data-modal="close"> × </span>\
+                </div>',
+            content  : '<div class="EModal-content">{content}</div>',
+            alert    : '\
                 <div class="EModal-btns">\
                     <a href="#none" data-modal="ok" class="EModal-btn EModal-ok">{btnOkText}</a>\
                 </div>',
-            confirm : '\
+            confirm  : '\
                 <div class="EModal-btns">\
                     <a href="#none" data-modal="ok" class="EModal-btn EModal-ok">{btnOkText}</a>\
                     <a href="#none" data-modal="cancel" class="EModal-btn EModal-cancel">{btnCancelText}</a>\
                 </div>',
             countdown: '<strong data-modal="countdown">{s}</strong>秒后自动关闭',
-            overlay : '<div class="EModal-overlay" data-modal="overlay"></div>',
-            iframe  : '<iframe src="{src}" marginwidth="0" marginheight="0" frameborder="0" scrolling="no"></iframe>'
+            overlay  : '<div class="EModal-overlay" data-modal="overlay"></div>',
+            iframe   : '<iframe src="{src}" marginwidth="0" marginheight="0" frameborder="0" scrolling="no"></iframe>'
         },
         selector: {
-            trigger : '[data-modal="trigger"]',
-            content : '[data-modal="content"]',
-            close   : '[data-modal="close"]',
-            ok      : '[data-modal="ok"]',
-            cancel  : '[data-modal="cancel"]',
-            overlay : '[data-modal="overlay"]',
-            countdown: '[data-modal="countdown"]'
+            trigger   : '[data-modal="trigger"]',
+            content   : '[data-modal="content"]',
+            close     : '[data-modal="close"]',
+            ok        : '[data-modal="ok"]',
+            cancel    : '[data-modal="cancel"]',
+            overlay   : '[data-modal="overlay"]',
+            countdown : '[data-modal="countdown"]'
         },
         onReady: emptyFunction,
         onClose: emptyFunction,
         onCancel: emptyFunction,
-        onOk: emptyFunction,
+        onOk: emptyFunction
     };
 
     function EModal($element, options) {
@@ -86,7 +90,7 @@
 
             this.$trigger    = this.$el;
             this.$overlay    = $(settings.template.overlay);
-            
+
             // n秒自动关闭计时器
             this.timer       = null;
 
@@ -119,18 +123,18 @@
 
             var content = this.getHTML(settings.type).content;
             var button  = this.getHTML(settings.type).button;
-            
-            var title   = settings.title 
-                ? template.title.replace(/\{title\}/g, settings.title) 
+
+            var title   = settings.title
+                ? template.title.replace(/\{title\}/g, settings.title)
                 : '';
-            var countdown = settings.countdown 
+            var countdown = settings.countdown
                 ? template.countdown.replace(/\{s\}/g, settings.countdown)
                 : '';
-           
+
             var hasBtn  = /alert|confirm/.test( settings.type );
 
             var result  = template.wrap.replace(/\{id\}/g, id);
-            
+
             result = result.replace(/\{content\}/g, content);
             result = result.replace(/\{title\}/g,  title);
             result = result.replace(/\{button\}/g, hasBtn ? button : '');
@@ -163,26 +167,26 @@
                 .delegate(selector.ok, 'click', function() {
                     _this.ok();
                 });
-                           
+
                 if ( _this.settings.autoClose ) {
                     this.$overlay
                     .unbind('click')
                     .bind('click', function() {
-                        _this.close(); 
-                    });    
-                }     
-                
+                        _this.close();
+                    });
+                }
+
             } else {
                 this.$trigger.bind('open', function() {
                     _this.open();
                 });
-                
+
                 this.$trigger.click(function () {
                     $(this).trigger('open');
-                }); 
+                });
             }
         },
-    
+
         setPos: function($ele) {
             var settings = this.settings;
             var top = - ($ele.outerHeight() / 2);
@@ -199,18 +203,18 @@
 
             this.$modal.css(modalStyle);
             $ele.css('margin-top', top);
-            
+
             this.$overlay.css({
                 width: $(document).outerWidth(),
                 height: this.$body.outerHeight() + 50
-            });            
+            });
         },
 
         close: function (e) {
-    	    this.$modal.remove();
+            this.$modal.remove();
             this.$overlay.remove();
             this.settings.onClose.call(this);
-            
+
             clearInterval(this.timer);
         },
         ok: function (e) {
@@ -225,7 +229,7 @@
         getHTML: function (type) {
             var settings = this.settings;
             var template = settings.template;
-            
+
             var content = template.content.replace(/\{content\}/g, settings.content);
             var button = '';
 
@@ -245,22 +249,22 @@
                 button: button
             };
         },
-        
+
         countdown: function($ele) {
             var _this = this;
             var countdown = _this.settings.countdown;
-            
+
             _this.timer = setInterval(function() {
-                
+
                 if ( countdown < 1 ) {
                     _this.close();
                 } else {
                     $ele.html( --countdown );
                 }
-                
+
             }, 1000);
         }
-        
+
     };
 
 
