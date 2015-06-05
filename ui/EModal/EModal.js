@@ -24,11 +24,12 @@
         content: '',
         width: 300,
         fixed: true,
-        countdown: 5,
+        countdown: false,
         autoClose: false,
         btnOkText: '确定',
         btnCancelText: '取消',
         hasOverLay: true,
+        keyBinding: true,
         template: {
             wrap     : '<div id="{id}" class="EModal" data-role="EModal">{title}{content}{button}{countdown}</div>',
             title    : '\
@@ -94,6 +95,9 @@
             // n秒自动关闭计时器
             this.timer       = null;
 
+            // 是否已经打开
+            this.opened        = false;
+
             template.alert   = template.alert.replace('{'+ BTN_OK +'}', settings[BTN_OK]);
             template.confirm = template.confirm
                 .replace('{'+ BTN_CANCEL +'}', settings[BTN_CANCEL])
@@ -108,7 +112,7 @@
 
         },
 
-        open: function () {
+        open: function ($trigger) {
             var settings   = this.settings;
             var selector   = settings.selector;
             var template   = settings.template;
@@ -143,6 +147,9 @@
             this.$modal = $(result);
             this.$body.append(this.$modal);
             this.setPos(this.$modal);
+            this.setDrag(this.$modal);
+
+            this.opened = true;
 
             if ( settings.countdown ) {
                 this.$countdown = this.$modal.find(selector.countdown);
@@ -153,12 +160,14 @@
         },
 
         bindEvent: function($ele) {
-            var _this = this;
-            var selector = _this.settings.selector;
+            var _this      = this;
+            var settings   = _this.settings;
+            var selector   = settings.selector;
+            var keyDownEvt = ['keydown', this._name, this._guid].join('.');
 
             if ( $ele ) {
                 $ele.undelegate()
-                .delegate(selector.close, 'click', function(e) {
+                .delegate(selector.close, 'click', function() {
                     _this.close();
                 })
                 .delegate(selector.cancel, 'click', function() {
@@ -168,62 +177,137 @@
                     _this.ok();
                 });
 
-                if ( _this.settings.autoClose ) {
-                    this.$overlay
+                if ( settings.autoClose ) {
+                    _this.$overlay
                     .unbind('click')
                     .bind('click', function() {
                         _this.close();
                     });
                 }
 
+                if ( settings.keyBinding ) {
+                    $(document).unbind(keyDownEvt)
+                    .bind(keyDownEvt, function (e) {
+                        _this.bindKey(e.keyCode);
+                    });
+                }
             } else {
-                this.$trigger.bind('open', function() {
-                    _this.open();
+                _this.$trigger.bind('open', function() {
+                    _this.open( $(this) );
                 });
 
-                this.$trigger.click(function () {
+                _this.$trigger.click(function () {
                     $(this).trigger('open');
+                    this.blur();
+                    _this.$modal[0].focus();
                 });
             }
         },
 
+        bindKey: function (keyCode) {
+            if ( !this.opened ) return;
+
+            if ( keyCode === 27 ) this.cancel();
+            if ( keyCode === 13 ) this.ok();
+        },
+
+        setDrag: function ($ele) {
+            var $body     = this.$body;
+            var mousedown = false;
+
+            var elX       = $ele.offset().left;
+            var elY       = $ele.offset().top;
+            var elW       = $ele.outerWidth();
+            var elH       = $ele.outerHeight();
+            var startX, startY;
+
+            function move(evt, $tar) {
+                var exX     = evt.clientX - startX;
+                var exY     = evt.clientY - startY;
+                var bWidth  = $body.outerWidth();
+                var bHeight = $body.outerHeight();
+
+                if ( exX > bWidth - elX - elW ) {
+                    exX = bWidth - elX - elW;
+                }
+                if ( exY > bHeight - elY - elH ) {
+                    exY = bHeight - elY - elH;
+                }
+
+                $tar.css({
+                    position: 'absolute',
+                    left: elX + exX,
+                    top: elY + exY,
+                    margin: 0
+                });
+            }
+
+            $ele.bind('mousedown', function (e) {
+                mousedown = true;
+                startX = e.clientX;
+                startY = e.clientY;
+
+                elX = $ele.offset().left;
+                elY = $ele.offset().top;
+            });
+            $ele.bind('mouseup', function () {
+                mousedown = false;
+                elX = $ele.offset().left;
+                elY = $ele.offset().top;
+            });
+            $ele.bind('mousemove', function (e) {
+                if ( mousedown ) {
+                    move(e, $ele);
+                }
+            });
+        },
+
         setPos: function($ele) {
             var settings = this.settings;
-            var top = - ($ele.outerHeight() / 2);
-            var left = - (settings.width / 2);
+            var top      = - ($ele.outerHeight() / 2);
+            var left     = - (settings.width / 2);
+
+            var $body    = this.$body;
+            var bML      = parseInt($body.css('margin-left'), 10);
+            var bMR      = parseInt($body.css('margin-right'), 10);
+            var bMT      = parseInt($body.css('margin-top'), 10);
+            var bMB      = parseInt($body.css('margin-bottom'), 10);
 
             var modalStyle = {
                 'width': settings.width,
                 'margin-left': left
             };
 
-            if ( settings.fixed) {
-                modalStyle['position'] = 'fixed';
+            if ( settings.fixed ) {
+                this.$modal.addClass('EModal-fixed');
             }
 
             this.$modal.css(modalStyle);
             $ele.css('margin-top', top);
 
             this.$overlay.css({
-                width: $(document).outerWidth(),
-                height: this.$body.outerHeight() + 50
+                width: $body.outerWidth() + bML + bMR,
+                height: $body.outerHeight() + bMT + bMB
             });
         },
 
-        close: function (e) {
+        close: function () {
+            this.opened = false;
+
             this.$modal.remove();
             this.$overlay.remove();
+
             this.settings.onClose.call(this);
 
             clearInterval(this.timer);
         },
-        ok: function (e) {
-            this.settings.onOk.call(this);
+        ok: function () {
             this.close();
+            this.settings.onOk.call(this);
         },
         cancel: function() {
-            this.settings.onCancel.call(this);
             this.close();
+            this.settings.onCancel.call(this);
         },
 
         getHTML: function (type) {

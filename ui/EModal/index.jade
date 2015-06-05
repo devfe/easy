@@ -9,17 +9,21 @@ block content
     legend Normal
     .demo
       a.EModal-0(href="#none") 弹出模态层
-      #pop-up(style="height:1000px") 哈哈哈哈哈哈哈哈哈哈哈哈哈哈
+      #pop-up(style="height:1000px")  Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ad, beatae eos ab, esse cupiditate doloribus cumque tenetur atque aspernatur, maxime ipsam nemo ipsum quis placeat. Facere ipsam debitis quidem nostrum!
 
 block localScript
   script.
     $(function() {
       $('.EModal-0').EModal({
-        type: 'confirm',
-        title: '哈哈',
-        btnOkText: 'ok',
-        btnCancelText: 'cancel',
-        content: '这<br>里<br>面<br>是<br>内<br>容'
+        type: 'alert',
+        title: 'Modal',
+        template: {
+          alert: '\
+                <div class="EModal-btns">\
+                    <button data-modal="ok" accesskey="enter" class="EModal-btn EModal-ok">{btnOkText}</button>\
+                </div>'
+        },
+        content: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Itaque eveniet eius repudiandae aut, dolorum amet beatae distinctio quam, nemo minus, velit quod assumenda. Magnam distinctio fugiat in expedita officiis vitae.'
       });
     });
 

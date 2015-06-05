@@ -269,7 +269,7 @@ gulp.task('watch', function() {
 // 启动本地服务器
 gulp.task('server', function() {
     connect.server({
-        port: 1024,
+        port: 8080,
         root: [DIR.ui, './build'],
         livereload: false
     });
