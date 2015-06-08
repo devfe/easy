@@ -14,7 +14,7 @@ block content
       input(type="text", id="ECalendar")
 
   fieldset
-    legend outputFormat: '{Y}_{M}_{D}'
+    legend outputFormat: '{Y}/{M}/{D}'
     .demo
       input(type="text", id="ECalendar1")
 
@@ -36,7 +36,7 @@ block localScript
     });
     $('#ECalendar1').ECalendar({
         id: 'Ant_id_you_want',
-        outputFormat: '{Y}_{M}_{D}'
+        outputFormat: '{Y}/{M}/{D}'
     });
     $('#ECalendar2').ECalendar({
         id: 'ID_Must_Unique1',

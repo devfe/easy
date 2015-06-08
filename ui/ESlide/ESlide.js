@@ -51,15 +51,18 @@
 
     ESlide.prototype = {
         init: function() {
-            this.triggers = this.$el.find(this.settings.selector.trigger);
-            this.items    = this.$el.find(this.settings.selector.item);
+            var settings = this.settings;
+            var selector = settings.selector;
+
+            this.triggers = this.$el.find(selector.trigger);
+            this.items    = this.$el.find(selector.item);
 
             this.interval = null;
 
             this.length   = this.items.length;
 
             // 焦点图切换当前下标
-            this.current  = this.settings.defaultIndex || 0;
+            this.current  = settings.defaultIndex || 0;
 
             if ( this.triggers.length !== this.items.length ) {
                 throw new Error('「' + EPluginName + '」 The slide item count must equals to trigger count.');
@@ -71,31 +74,32 @@
                 *  比如高亮class和内容的显示与否由后端同步输出到页面,避免js
                 *  修改产生的闪动。
                 */
-                if ( typeof this.settings.defaultIndex === 'number' ) {
-                    this.triggers.eq(this.settings.defaultIndex).trigger(this.settings.event);
+                if ( typeof settings.defaultIndex === 'number' ) {
+                    this.triggers.eq(settings.defaultIndex).trigger(settings.event);
                 }
             }
 
             // 如果事件是鼠标移入，添加延迟防止误操作
-            if ( /mouseover|mouseenter/.test(this.settings.event) && !this.settings.delay ) {
-                this.settings.delay = 200;
+            if ( /mouse/.test(settings.event) && !settings.delay ) {
+                settings.delay = 200;
             }
 
             // 特殊情况设置interval为null可以阻止默认播放焦点图
-            if ( this.settings.interval ) {
+            if ( settings.interval ) {
                 this.start();
             }
 
             // 是否使用css3动画切换
             this.supportTransition = this.support('opacity') && this.support('transition');
 
-            this.settings.onReady.call(this, this.settings.defaultIndex);
+            settings.onReady.call(this, settings.defaultIndex);
         },
 
         bindEvent: function() {
             var _this           = this;
-            var event           = this.settings.event;
-            var selectors       = _this.settings.selector;
+            var settings        = _this.settings;
+            var event           = settings.event;
+            var selectors       = settings.selector;
             var itemSelector    = selectors.item;
             var triggerSelector = selectors.trigger;
             var pagerSelector   = selectors.pager;
@@ -115,7 +119,7 @@
                 _this.start();
             });
 
-            if ( this.settings.pager ) {
+            if ( settings.pager ) {
                 this.$el.undelegate('click')
                 .delegate(pagerSelector, 'click', function() {
                     var isNext = $(this).attr('data-slide') === 'next';
@@ -128,7 +132,7 @@
             }
 
             // 焦点图内容鼠标hover暂停播放
-            if ( this.settings.onHoverStop ) {
+            if ( settings.onHoverStop ) {
                 this.$el.undelegate('mouseover mouseout')
                 .delegate(itemSelector, 'mouseover', function() {
                     _this.stop();

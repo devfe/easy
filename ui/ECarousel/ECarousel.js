@@ -9,33 +9,33 @@
 (function ($, window, document) {
     'use strict';
     // 插件名称：新建插件全局替换字符 ECarousel 即可
-    var EPluginName = 'ECarousel';
+    var EPluginName    = 'ECarousel';
 
     // 插件版本
     var EPluginVersion = '@VERSION';
 
-    var emptyFunction = function() {};
+    var emptyFunction  = function() {};
 
     // 插件参数默认值
     var defaults = {
-        event: 'click',
-        loop: false,
-        visible: 1,
-        step: 1,
-        auto: false,
-        direction: 'x',
-        debug: false,
+        event           : 'click',
+        loop            : false,
+        visible         : 1,
+        step            : 1,
+        auto            : false,
+        direction       : 'x',
+        debug           : false,
         // 用来区域前进后退不可用状态 prev-disabled/next-disabled
-        prevDisable: 'prev-disabled',
-        nextDisable: 'next-disabled',
+        prevDisable     : 'prev-disabled',
+        nextDisable     : 'next-disabled',
         // 一般情况不需要显式的传组件宽高值，插件会自动计算第一个item的宽高
-        // 来确定 $el 的宽高度: width = itemW * visible, height = itemH
+        // 来确定 $el 的宽高度 : width = itemW * visible, height = itemH
         // 此参数用优先级高于组件自动计算
-        width: null,
-        height: null,
-        pager: null,
-        pagerCurrent: 'current',
-        pagerEvent: 'click',
+        width           : null,
+        height          : null,
+        pager           : null,
+        pagerCurrent    : 'current',
+        pagerEvent      : 'click',
         pagerTPL: '<a href="#none" class="cName" data-carouse="page">{n}</a>',
         selector: {
             wrap: '[data-carouse="wrap"]',
@@ -48,9 +48,9 @@
     };
 
     function ECarousel($element, options) {
-        this.$el = $element;
+        this.$el       = $element;
 
-        this.settings = $.extend(true, {}, defaults, options) ;
+        this.settings  = $.extend(true, {}, defaults, options) ;
 
         this._defaults = defaults;
         this._name     = EPluginName;
@@ -61,13 +61,16 @@
 
     ECarousel.prototype = {
         init: function() {
-            var sPrev = this.settings.selector.prev;
-            var sNext = this.settings.selector.next;
+            var settings = this.settings;
+            var selector = settings.selector;
 
-            this.$wrap = this.$el.find(this.settings.selector.wrap);
-            this.$body = this.$el.find(this.settings.selector.body);
-            this.$item = this.$el.find(this.settings.selector.item);
-            this.$pages = this.$el.find(this.settings.selector.page);
+            var sPrev    = selector.prev;
+            var sNext    = selector.next;
+
+            this.$wrap   = this.$el.find(selector.wrap);
+            this.$body   = this.$el.find(selector.body);
+            this.$item   = this.$el.find(selector.item);
+            this.$pages  = this.$el.find(selector.page);
 
             // 按钮元素可以不依赖dom
             this.$prev = typeof sPrev === 'string'
@@ -81,13 +84,13 @@
             // 决定滚动效果的元信息
             var meta = {
                 // visible
-                v: this.settings.visible,
+                v: settings.visible,
                 // step
-                s: this.settings.step,
+                s: settings.step,
                 // item width
-                w: this.settings.width || this.$item.eq(0).outerWidth(),
+                w: settings.width || this.$item.eq(0).outerWidth(),
                 // item heigth
-                h: this.settings.height || this.$item.eq(0).outerHeight(),
+                h: settings.height || this.$item.eq(0).outerHeight(),
                 // length
                 l: this.$item.length
 
@@ -96,33 +99,32 @@
             // 步子迈太大
             if ( meta.s > meta.v ) {
                 throw new Error('Step should not more than visible.');
-                return 0;
             }
 
             // 不用初始化
             if ( meta.l <= meta.v ) {
-                if ( this.settings.debug ) {
+                if ( settings.debug ) {
                     console.info('Init failed, visible less than length');
                 }
                 return 0;
             }
 
-            this.m = meta;
+            this.m       = meta;
 
             // total frame
-            this.total =  Math.ceil((meta.l - meta.v) / meta.s);
+            this.total   =  Math.ceil((meta.l - meta.v) / meta.s);
             // current frame
             this.current = 0;
 
-            this.timer = null;
+            this.timer   = null;
 
-            this.$el.addClass('ECarousel-dir-' + this.settings.direction);
+            this.$wrap.addClass('ECarousel-dir-' + settings.direction);
 
             this.prepare(meta);
             this.bindEvent();
 
-            if ( this.settings.auto ) {
-                this.settings.loop = true;
+            if ( settings.auto ) {
+                settings.loop = true;
                 this.start();
             }
         },
@@ -130,7 +132,11 @@
         // 绑定事件
         bindEvent: function () {
             var _this = this;
-            var evt = this.settings.event;
+
+            var settings = this.settings;
+            var selector = settings.selector;
+
+            var evt = settings.event;
 
             this.$prev.unbind(evt)
             .bind(evt, function () {
@@ -142,25 +148,28 @@
                 _this.next();
             });
 
-            if ( this.settings.pager ) {
-                this.$el.undelegate(this.settings.pagerEvent)
+            if ( settings.pager ) {
+                this.$el.undelegate(settings.pagerEvent)
                 .delegate(
-                this.settings.selector.page,
-                this.settings.pagerEvent,
-                function () {
-                    _this.handlePager( $(this) );
-                });
+                    selector.page,
+                    settings.pagerEvent,
+                    function () {
+                        _this.handlePager( $(this) );
+                    }
+                );
             }
         },
 
         // 计算滚动范围，尺寸等
         prepare: function (m) {
-            var isX = this.settings.direction === 'x';
+            var settings   = this.settings;
+            var selector   = settings.selector;
+            var isX        = settings.direction === 'x';
 
-            var wrapWidth = isX ? m.w * m.v : m.w;
-            var wrapHeight = isX ? m.h : m.h * m.v
+            var wrapWidth  = isX ? m.w * m.v : m.w;
+            var wrapHeight = isX ? m.h : m.h * m.v;
 
-            var bodyWidth = isX ? m.w * m.l : m.w;
+            var bodyWidth  = isX ? m.w * m.l : m.w;
             var bodyHeight = isX ? m.h : m.h * m.l;
 
             this.$wrap.css({
@@ -174,8 +183,8 @@
                 height: bodyHeight
             });
 
-            if ( this.settings.pager
-                && this.$el.find(this.settings.selector.page).length < 1 ) {
+            if ( settings.pager
+                && this.$el.find(selector.page).length < 1 ) {
                 this.renderPager(this.total);
             }
         },
@@ -186,19 +195,20 @@
             this.go(index);
         },
         renderPager: function (n) {
+            var settings = this.settings;
             var i = 0;
             var result = [];
 
-            this.$pager = this.$el.find('.' + this.settings.pager);
+            this.$pager = this.$el.find('.' + settings.pager);
 
             while ( i <= n ) {
                 var cName = i === 0 ? 'current' : '';
-                result.push(this.settings.pagerTPL.replace(/\{n\}/g, i+1).replace('cName', cName));
+                result.push(settings.pagerTPL.replace(/\{n\}/g, i+1).replace('cName', cName));
                 i++;
             }
             this.$pager.append(result.join(''));
 
-            this.$pages = this.$el.find(this.settings.selector.page);
+            this.$pages = this.$el.find(settings.selector.page);
         },
         setPagerStatus: function (n) {
             var cName = this.settings.pagerCurrent;
@@ -245,13 +255,14 @@
         },
 
         start: function () {
-            var _this = this;
-            var interval = typeof this.settings.auto === 'number'
-                ? this.settings.auto
+            var _this    = this;
+            var settings = _this.settings;
+            var interval = typeof settings.auto === 'number'
+                ? settings.auto
                 : 5000;
 
             this.timer = setInterval(function () {
-                _this.$next.trigger(_this.settings.event);
+                _this.$next.trigger(settings.event);
             }, interval);
         },
 
@@ -260,7 +271,8 @@
         },
 
         go: function(n) {
-            var css = this.settings.direction === 'x'
+            var settings = this.settings;
+            var css = settings.direction === 'x'
                 ? { left: - this.m.w * n * this.m.s }
                 : { top: - this.m.w * n * this.m.s }
 
@@ -268,14 +280,14 @@
 
             this.$body.css(css);
 
-            if ( !this.settings.loop ) {
+            if ( !settings.loop ) {
                 this.setDisabled(n);
             }
-            if ( this.settings.pager ) {
+            if ( settings.pager ) {
                 this.setPagerStatus(n);
             }
 
-            if ( this.settings.debug ) {
+            if ( settings.debug ) {
                 console.log('Switch to:' + n + ' in ' + this.total + ' frame');
             }
         },

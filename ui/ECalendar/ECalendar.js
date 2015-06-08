@@ -9,27 +9,27 @@
 (function ($, window, document) {
     'use strict';
     // 插件名称：新建插件全局替换字符 ECalendar 即可
-    var EPluginName = 'ECalendar';
+    var EPluginName    = 'ECalendar';
 
     // 插件版本
     var EPluginVersion = '@VERSION';
 
-    var emptyFunction = function() {};
+    var emptyFunction  = function() {};
 
     // 插件参数默认值
     var defaults = {
-        id: null,
+        id           : null,
         // The day JavaScript born
-        start: '1995-5-1',
+        start        : '1995-5-1',
         // Last day
-        end: '2043-5-1',
-        outputFormat: '{Y}-{M}-{D}',
-        weekName: ['日', '一', '二', '三', '四', '五', '六'],
-        today: true,
-        hoverClass: 'ECal-hover',
-        currentDay: 'ECal-active',
-        close: false,
-        curr: new Date(),
+        end          : '2043-5-1',
+        outputFormat : '{Y}-{M}-{D}',
+        weekName     : ['日', '一', '二', '三', '四', '五', '六'],
+        today        : true,
+        hoverClass   : 'ECal-hover',
+        currentDay   : 'ECal-active',
+        close        : false,
+        curr         : new Date(),
         selector: {
             trigger : '[data-date]',
             sYear   : '[data-cal="sYear"]',
@@ -85,30 +85,32 @@
 
     ECalendar.prototype = {
         init: function() {
-            var TPL = this.settings.template.wrap;
+            var settings = this.settings;
+            var selector = settings.selector;
+            var TPL      = settings.template.wrap;
 
-            if ( !this.settings.id ) {
+            if ( !settings.id ) {
                 throw new Error( '「' + EPluginName + '」 The calendar`s id should be given a uniq String' );
             }
 
-            if ( $('#' + this.settings.id).length < 1 ) {
-                TPL = TPL.replace('{ID}', this.settings.id);
+            if ( $('#' + settings.id).length < 1 ) {
+                TPL = TPL.replace('{ID}', settings.id);
                 $('body').eq(0).append( TPL );
             }
 
             // elements
-            this.$cal       = $('#' + this.settings.id);
-            this.$sYear     = this.$cal.find(this.settings.selector.sYear);
-            this.$sMonth    = this.$cal.find(this.settings.selector.sMonth);
-            this.$switcher  = this.$cal.find(this.settings.selector.switcher);
-            this.$close     = this.$cal.find(this.settings.selector.close);
+            this.$cal       = $('#' + settings.id);
+            this.$sYear     = this.$cal.find(selector.sYear);
+            this.$sMonth    = this.$cal.find(selector.sMonth);
+            this.$switcher  = this.$cal.find(selector.switcher);
+            this.$close     = this.$cal.find(selector.close);
 
-            this.triggerAttr = this.settings.selector.trigger.replace(/\[|\]/g, '');
+            this.triggerAttr = selector.trigger.replace(/\[|\]/g, '');
 
-            this.current     = this.formatDate(this.settings.curr);
+            this.current     = this.formatDate(settings.curr);
 
             // 记录高亮显示「已选择」的时间
-            this.highLight   = this.formatDate(this.settings.curr);
+            this.highLight   = this.formatDate(settings.curr);
 
             // 初始化日历位置
             this.initStyle();
@@ -125,28 +127,31 @@
             // 绑定事件
             this.bindEvent();
 
-            if ( this.settings.close ) {
+            if ( settings.close ) {
                 this.$close.show();
             }
 
-            this.settings.onReady.call(this);
+            settings.onReady.call(this);
         },
 
         bindEvent: function() {
             var _this = this;
+            var settings = _this.settings;
+            var selector = settings.selector;
+
             var changeEvt = [ 'change', EPluginName, this.Eguid ];
             var clickEvt = [ 'click', EPluginName, this.Eguid ];
 
             var changeEvtSelector = [
-                this.settings.selector.sYear,
-                this.settings.selector.sMonth
+                selector.sYear,
+                selector.sMonth
             ];
             var clickEvtSelector = [
-                this.settings.selector.switcher,
-                this.settings.selector.close
+                selector.switcher,
+                selector.close
             ];
 
-            var switcherAttr = this.settings.selector.switcher.replace(/\[|\]/g, '');
+            var switcherAttr = selector.switcher.replace(/\[|\]/g, '');
 
             this.$cal.undelegate(changeEvt.join('.'))
             .delegate(changeEvtSelector.join(','), changeEvt.join('.'), function () {
@@ -157,10 +162,10 @@
             .delegate(clickEvtSelector.join(','), clickEvt.join('.'), function () {
                 var sign = $(this).attr(switcherAttr);
 
-                if ( $(this).is(_this.settings.selector.switcher) ) {
+                if ( $(this).is(selector.switcher) ) {
                     _this.goTo(sign);
                 }
-                if ( $(this).is(_this.settings.selector.close) ) {
+                if ( $(this).is(selector.close) ) {
                     _this.hide();
                 }
             });
@@ -172,17 +177,19 @@
 
             this.$cal.bind('click', function(e) {
                 var el = $(e.target);
-                var date = parseInt(el.attr(_this.triggerAttr));
+                var date = parseInt(el.attr(_this.triggerAttr), 10);
                 var now = _this.formatDate(new Date());
 
                 if (el.attr(_this.triggerAttr)) {
                     _this.chooseDate(date);
                 }
-                if (_this.settings.today && el.hasClass('ECal-today')) {
+                if (settings.today && el.hasClass('ECal-today')) {
                     _this.$sYear.val(now.year);
                     _this.$sMonth.val(now.month);
-                    _this.current.year = now.year;
+
+                    _this.current.year  = now.year;
                     _this.current.month = now.month;
+
                     _this.chooseDate(now.date);
                     _this.hide();
                 }
@@ -226,7 +233,7 @@
                     throw new Error('「' + EPluginName + '」 Illegal date string :`' + fullDate + '`.');
                 } else {
                     dateArr = fullDate.split('-');
-                    now = new Date(dateArr[0], parseInt(dateArr[1]) - 1, dateArr[2]);
+                    now = new Date(dateArr[0], parseInt(dateArr[1], 10) - 1, dateArr[2]);
                 }
             } else {
                 now = fullDate;
@@ -310,13 +317,13 @@
             }
             this.renderDate();
         },
+
         updateCurrent: function() {
-            this.current.year     = parseInt(this.$sYear.val());
-            this.current.month    = parseInt(this.$sMonth.val());
+            this.current.year     = parseInt(this.$sYear.val(), 10);
+            this.current.month    = parseInt(this.$sMonth.val(), 10);
             this.current.day      = 1;
             this.current.firstDay = new Date(this.current.year, this.current.month - 1, 1).getDay();
         },
-
 
         renderSelect: function(fullDate) {
             var yearOptionHtml  = '';
@@ -359,13 +366,15 @@
                 return 30;
             }
         },
+
         renderWeek: function() {
-            var weekName = this.settings.weekName;
+            var settings = this.settings;
+            var weekName = settings.weekName;
             var len      = weekName.length;
-            var weekEl   = this.$cal.find(this.settings.selector.week);
+            var weekEl   = this.$cal.find(settings.selector.week);
             var resHTML  = '';
 
-            var tplWeek = this.settings.template.week;
+            var tplWeek = settings.template.week;
 
             for (var i = 0; i < len; i++) {
                 resHTML += tplWeek.replace(/\{NUM\}/g, i)
@@ -374,6 +383,7 @@
 
             weekEl.html(resHTML);
         },
+
         renderDate: function(d) {
             var i, j, dateCount,
                 k = 1,

@@ -9,7 +9,7 @@
 (function ($, window, document) {
     'use strict';
     // 插件名称：新建插件全局替换字符ETab即可
-    var EPluginName = 'ETab';
+    var EPluginName    = 'ETab';
 
     // 插件版本
     var EPluginVersion = '@VERSION';
@@ -46,9 +46,12 @@
 
     ETab.prototype = {
         init: function() {
-            this.triggers = this.$el.find(this.settings.selector.trigger);
-            this.items    = this.$el.find(this.settings.selector.item);
-            this.anchors  = this.$el.find(this.settings.selector.anchor);
+            var settings  = this.settings;
+            var selector  = settings.selector;
+
+            this.triggers = this.$el.find(selector.trigger);
+            this.items    = this.$el.find(selector.item);
+            this.anchors  = this.$el.find(selector.anchor);
 
             if ( this.triggers.length - this.anchors.length !== this.items.length ) {
                 throw new Error('「' + EPluginName + '」 The tab item count must equals to tab content count.');
@@ -60,30 +63,32 @@
                 *  比如高亮class和内容的显示与否由后端同步输出到页面,避免js
                 *  修改产生的闪动。
                 */
-                if ( typeof this.settings.defaultIndex === 'number' ) {
-                    this.triggers.eq(this.settings.defaultIndex).trigger(this.settings.event);
+                if ( typeof settings.defaultIndex === 'number' ) {
+                    this.triggers.eq(settings.defaultIndex).trigger(settings.event);
                 }
 
-                this.settings.onReady.call(this, this.settings.defaultIndex);
+                settings.onReady.call(this, settings.defaultIndex);
             }
 
             // 如果事件是鼠标移入，添加延迟防止误操作
-            if ( /mouseover|mouseenter/.test(this.settings.event) && !this.settings.delay ) {
+            if ( /mouseover|mouseenter/.test(settings.event) && !settings.delay ) {
                 this.settings.delay = 200;
             }
         },
 
         bindEvent: function() {
-            var _this = this;
+            var _this    = this;
+            var settings = _this.settings;
+            var selector = settings.selector;
 
-            this.$el.undelegate(this.settings.event)
-            .delegate(this.settings.selector.trigger, this.settings.event, function() {
+            this.$el.undelegate(settings.event)
+            .delegate(selector.trigger, settings.event, function() {
                 _this.handleEvent( $(this) );
             });
 
-            if ( /mouseover|mouseenter/.test(this.settings.event) ) {
+            if ( /mouseover|mouseenter/.test(settings.event) ) {
                 this.$el.undelegate('mouseout mouseleave')
-                .delegate(this.settings.selector.trigger, 'mouseout mouseleave', function() {
+                .delegate(selector.trigger, 'mouseout mouseleave', function() {
                     clearTimeout(_this.timer);
                 });
             }
@@ -103,7 +108,7 @@
             var triggers = this.triggers;
             var currTris = triggers.eq(n);
 
-            triggers.removeClass(this.settings.current)
+            triggers.removeClass(this.settings.current);
             currTris.addClass(this.settings.current);
 
             // 点击锚点仅切换trigger样式，不切换内容显示状态
@@ -119,7 +124,7 @@
         },
         loadImages: function($el) {
             var lazyImgAttr = this.settings.lazyload;
-            var $imgs = $el.find('['+ lazyImgAttr +']');
+            var $imgs       = $el.find('['+ lazyImgAttr +']');
 
             $imgs.each(function() {
                 var originSrc = $(this).attr(lazyImgAttr);

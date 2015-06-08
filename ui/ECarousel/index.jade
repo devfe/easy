@@ -60,7 +60,7 @@ block content
         .ECarousel-pager
   fieldset
     legend Auto: true
-    .demo  
+    .demo
       .ECarousel
         .ECarousel-wrap(data-carouse="wrap")
           ul.ECarousel-body(data-carouse="body")
@@ -73,7 +73,7 @@ block content
         .ECarousel-pager
   fieldset
     legend Direction: y
-    .demo  
+    .demo
       .ECarousel
         .ECarousel-wrap(data-carouse="wrap")
           ul.ECarousel-body(data-carouse="body")
@@ -83,10 +83,10 @@ block content
         .ECarousel-ctrl
           a(href="#none", data-carouse="prev", class="prev-disaxbled") &lt;
           a(href="#none", data-carouse="next") &gt;
-        .ECarousel-pager  
-           
+        .ECarousel-pager
+
     br
-    br    
+    br
 
 block localScript
   script.
@@ -98,13 +98,13 @@ block localScript
       pager: 'ECarousel-pager'
     });
     $('.ECarousel').eq(1).ECarousel({
-      visible:1,
-      step:1,
+      visible:4,
+      step:4,
       pager: 'ECarousel-pager',
       auto: 1000
-    });  
+    });
     $('.ECarousel').eq(2).ECarousel({
       direction: 'y',
       pager: 'ECarousel-pager',
       auto: 1000
-    });       
+    });
