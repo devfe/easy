@@ -6,7 +6,7 @@ var gulp = require('gulp');
 
 // local server
 var connect = require('gulp-connect');
-var browserSync = require('browser-sync');
+// var browserSync = require('browser-sync');
 
 // compile
 var jade    = require('gulp-jade');
@@ -269,9 +269,11 @@ gulp.task('watch', function() {
 // 启动本地服务器
 gulp.task('server', function() {
     connect.server({
-        port: 8080,
-        root: [DIR.ui, './build'],
-        livereload: false
+        port: 1024,
+        root: [DIR.ui, DIR.assets, './build'],
+        livereload: false,
+        host: 'gulp.dev'
+        // gulp.dev:1024
     });
 });
 

@@ -1,6 +1,6 @@
 module.exports = {
     ui         : './ui/',
-    assets     : './ui/assets',
+    assets     : './assets',
     scss       : './ui/*/*.scss',
     css        : ['./ui/*/*.css', '!./ui/assets/*.css'],
     script     : ['./ui/*/*.js', '!./ui/assets/*.js'],

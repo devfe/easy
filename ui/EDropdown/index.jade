@@ -1,4 +1,4 @@
-extends ../assets/layout
+extends ../../assets/layout
 
 block style
   link(type="text/css", rel="stylesheet", href="./#{name}.css")
@@ -48,7 +48,7 @@ block content
       li 子菜单项目1
       li 子菜单项目2
       li 子菜单项目3
-      
+
   fieldset
     legend Infinit
     .demo
@@ -57,13 +57,13 @@ block content
           .EDropdown-hd(data-drop="head") 下拉菜单2
             b ▼
     ul#infinit
-      li 
+      li
         a(href="#none") level 1
         ul
-          li 
+          li
             a(href="#none") level 2
             ul
-              li 
+              li
                 a(href="#none") level 3
                 ul
                   li 子菜单项目1
