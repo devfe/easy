@@ -90,7 +90,7 @@
             var TPL      = settings.template.wrap;
 
             if ( !settings.id ) {
-                throw new Error( '「' + EPluginName + '」 The calendar`s id should be given a uniq String' );
+                console.log( '「' + EPluginName + '」 The calendar`s id should be given a uniq String' );
             }
 
             if ( $('#' + settings.id).length < 1 ) {
@@ -230,7 +230,7 @@
 
             if ( typeof fullDate === 'string' ) {
                 if( !dateRe.test(fullDate) ) {
-                    throw new Error('「' + EPluginName + '」 Illegal date string :`' + fullDate + '`.');
+                    console.log('「' + EPluginName + '」 Illegal date string :`' + fullDate + '`.');
                 } else {
                     dateArr = fullDate.split('-');
                     now = new Date(dateArr[0], parseInt(dateArr[1], 10) - 1, dateArr[2]);
@@ -442,7 +442,7 @@
 
     $.fn[EPluginName] = function (options) {
         if ( !this.length ) {
-            console.error('「' + EPluginName + '」 The elements['+ this.selector +'] you passed is empty.');
+            console.log('「' + EPluginName + '」 The elements['+ this.selector +'] you passed is empty.');
             return this;
         } else {
             return this.each(function () {

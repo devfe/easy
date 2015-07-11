@@ -105,7 +105,7 @@
 
             // 已经存在元素/重复初始化 > 报错
             if ( $('#' + settings.id).length ) {
-                throw new Error('There is another element called ' + settings.id, 'Please change one.');
+                console.log('There is another element called ' + settings.id, 'Please change one.');
             } else {
                 this.bindEvent();
             }
@@ -357,7 +357,7 @@
 
     $.fn[EPluginName] = function (options) {
         if ( !this.length ) {
-            console.error('「' + EPluginName + '」 The elements['+ this.selector +'] you passed is empty.');
+            console.log('「' + EPluginName + '」 The elements['+ this.selector +'] you passed is empty.');
             return this;
         } else {
             return this.each(function () {

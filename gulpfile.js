@@ -143,7 +143,7 @@ gulp.task('rebuild_dir', function() {
     function writeFile (filename, content) {
         fs.writeFile(filename, content, 'utf-8', function(err) {
             if (err) {
-                console.error('=> File write failed: ' + err);
+                console.log('=> File write failed: ' + err);
             } else {
                 console.log('==> Created success. [' + filename + '].');
             }

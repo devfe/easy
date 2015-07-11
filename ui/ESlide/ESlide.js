@@ -65,7 +65,7 @@
             this.current  = settings.defaultIndex || 0;
 
             if ( this.triggers.length !== this.items.length ) {
-                throw new Error('「' + EPluginName + '」 The slide item count must equals to trigger count.');
+                console.log('「' + EPluginName + '」 The slide item count must equals to trigger count.');
             } else {
                 this.bindEvent();
 
@@ -243,7 +243,7 @@
 
     $.fn[EPluginName] = function (options) {
         if ( !this.length ) {
-            console.error('「' + EPluginName + '」 The elements['+ this.selector +'] you passed is empty.');
+            console.log('「' + EPluginName + '」 The elements['+ this.selector +'] you passed is empty.');
             return this;
         } else {
             return this.each(function () {

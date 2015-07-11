@@ -98,7 +98,7 @@
 
             // 步子迈太大
             if ( meta.s > meta.v ) {
-                throw new Error('Step should not more than visible.');
+                console.log('Step should not more than visible.');
             }
 
             // 不用初始化
@@ -315,7 +315,7 @@
 
     $.fn[EPluginName] = function (options) {
         if ( !this.length ) {
-            console.error('「' + EPluginName + '」 The elements['+ this.selector +'] you passed is empty.');
+            console.log('「' + EPluginName + '」 The elements['+ this.selector +'] you passed is empty.');
             return this;
         } else {
             return this.each(function () {
