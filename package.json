@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "JD Easy UI Library - Simple, easy, scalable.",
   "main": "gulpfile.js",
-  "dependencies": {},
+  "dependencies": {
+    "gulp-copy": "0.0.2"
+  },
   "devDependencies": {
     "browser-sync": "^2.3.1",
     "gulp": "^3.8.11",

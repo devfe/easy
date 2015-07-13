@@ -20,6 +20,7 @@ var rename     = require('gulp-rename');
 var header     = require('gulp-header');
 var replace    = require('gulp-replace');
 var sourcemaps = require('gulp-sourcemaps');
+var copy       = require('gulp-copy');
 
 // check
 var jshint       = require('gulp-jshint');
@@ -143,7 +144,7 @@ gulp.task('rebuild_dir', function() {
     function writeFile (filename, content) {
         fs.writeFile(filename, content, 'utf-8', function(err) {
             if (err) {
-                console.log('=> File write failed: ' + err);
+                console.error('=> File write failed: ' + err);
             } else {
                 console.log('==> Created success. [' + filename + '].');
             }
@@ -259,6 +260,11 @@ gulp.task('lint', function() {
         .pipe(jshint.reporter('default'));
 });
 
+gulp.task('copy_markdown', function() {
+    gulp.src(DIR.markdown)
+      .pipe(copy(DIR.build.md));
+});
+
 // 监控文件变化，实时编译模板文件
 gulp.task('watch', function() {
     gulp.watch(DIR.jade2watch, ['compile_jade']);
@@ -279,3 +285,4 @@ gulp.task('server', function() {
 
 gulp.task('dev', ['watch', 'server', 'compile_sass', 'compile_jade']);
 gulp.task('build', ['compress_js', 'concat_js', 'concat_css']);
+gulp.task('doc', ['copy_markdown']);

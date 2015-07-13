@@ -7,12 +7,15 @@ module.exports = {
 
     jade2watch : './ui/*/*.jade',
 
+    markdown   : ['./ui/**/*.md', './ui/guideline.md'],
+
     release    : 'http://localhost:1024/E/ui/',
 
     build: {
         combo : 'build/E/{VERSION}/',
         ui    : 'build/E/ui/',
         biz   : 'build/E/biz/1.0.0/',
-        base  : 'build/E/base/1.0.0'
+        base  : 'build/E/base/1.0.0',
+        md    : 'doc'
     }
 };
