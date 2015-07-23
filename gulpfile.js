@@ -156,7 +156,7 @@ gulp.task('rebuild_dir', function() {
         var jadeFile   = path.join(dir, 'index.jade');
         var jsFile     = path.join(dir, ui.name + '.js');
         var cssFile    = path.join(dir, ui.name + '.scss');
-        var readmeFile = path.join(dir, ui.name.substr(1).toLocaleLowerCase() + '.md');
+        var readmeFile = path.join(dir, ui.name + '.md');
 
         if ( !fs.existsSync(configFile) ) {
             configContent = JSON.stringify(ui, null, '    ');

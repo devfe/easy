@@ -27,7 +27,7 @@
 -----         | -----     | -----                   | -----
 event         | String    | 'click'                 | 触发切换事件类型
 delay         | Number    | 0                       | 延迟时间
-defaultIndex  | Null      | null                    | tab初始化后默认切换到第N个tab
+defaultIndex  | Number    | null                    | tab初始化后默认切换到第N个tab
 current       | String    | 'current'               | 当前tab tirgger 高亮样式
 lazyload      | Null      | null                    | 切换完tab后是否需要触发lazyload
 selector      | Object    | {}                      | 选择器
