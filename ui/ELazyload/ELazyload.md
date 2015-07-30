@@ -6,6 +6,7 @@
 
     <!-- 图片后加载 -->
     <div id="lazyload-img">
+        <div style="height:1000px">向下滚动看效果</div>
         <img data-src="http://img12.360buyimg.com/n4/jfs/t286/247/1804542634/153227/c9885ca/54422bcfN6d6b5fe0.jpg">
         <img data-src="http://img12.360buyimg.com/n4/jfs/t298/55/245046980/171632/9f73afc4/5406dd74N936674f2.jpg">
         <img data-src="http://img12.360buyimg.com/n4/jfs/t217/175/2044410654/457825/a4b93e77/54055b5cN00fe600a.jpg">
@@ -47,11 +48,11 @@ loadingClass | String   | 'ELazy-loading'       | 图片加载中 css class 属�
 errorClass   | String   | 'ELazy-error'         | 图片加载失败时 css class 属性
 debug        | Boolean  | false                 | 开启调试模式
 placeholder  | Array    | ['img', 'imgDataURI'] | 默认图片点位符：[0] => 图片地址， [1] => DataURI 字符串
-onAppear     | Function | emptyFunction         | 目标元素出现回调
-onReady      | Function | emptyFunction         | 组件初始化完成
-onComplete   | Function | emptyFunction         | 所有的目标都出现过回调
-onError      | Function | emptyFunction         | 图片加载出错回调(单个)
-onLoad       | Function | emptyFunction         | 图片加载完成回调(单个)
+onAppear     | Function | function() {}         | 目标元素出现回调
+onReady      | Function | function() {}         | 组件初始化完成
+onComplete   | Function | function() {}         | 所有的目标都出现过回调
+onError      | Function | function() {}         | 图片加载出错回调(单个)
+onLoad       | Function | function() {}         | 图片加载完成回调(单个)
 
 
 ## 方法
