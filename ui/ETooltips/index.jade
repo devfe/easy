@@ -1,0 +1,36 @@
+extends ../../assets/layout
+
+block style
+  link(type="text/css", rel="stylesheet", href="./#{name}.css")
+  style.
+    .tips {
+      display:inline-block;
+      padding: 4px 10px;
+      border:1px solid #ccc;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+block content
+
+  fieldset
+    legend Normal
+    .demo
+      a(href="#none" data-role="tooltips" title="This is a tool tips. placement:top", class="tips") Tooltips top
+      a(href="#none" data-role="tooltips" title="This is a tool tips. placement:right", class="tips") Tooltips right
+      a(href="#none" data-role="tooltips" title="This is a tool tips. placement:bottom", class="tips") Tooltips bottom
+      a(href="#none" data-role="tooltips" title="This is a tool tips. placement:left", class="tips") Tooltips left
+
+block localScript
+  script.
+    $('.tips').eq(0).ETooltips({
+      pos: 'top'
+    });
+    $('.tips').eq(1).ETooltips({
+      pos: 'right'
+    });
+    $('.tips').eq(2).ETooltips({
+      pos: 'bottom'
+    });
+    $('.tips').eq(3).ETooltips({
+      pos: 'left'
+    });

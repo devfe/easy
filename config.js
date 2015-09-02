@@ -27,6 +27,10 @@ module.exports = [{
     version: '1.0.0',
     hasCSS: false
 },{
+    name: 'ETooltips',
+    version: '1.0.0',
+    hasCSS: true
+},{
     name: 'ECalendar',
     version: '1.0.1',
     hasCSS: true

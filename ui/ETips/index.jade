@@ -8,6 +8,22 @@ block content
   fieldset
     legend Normal
     .demo
+      a(title="This is a tool tips. placement:top", class="ETooltips")
+      a(title="This is a tool tips. placement:right", class="ETooltips")
+      a(title="This is a tool tips. placement:bottom", class="ETooltips")
+      a(title="This is a tool tips. placement:left", class="ETooltips")
 
 block localScript
   script.
+    $('.ETooltips').eq(0).ETooltips({
+      pos: 'top'
+    });
+    $('.ETooltips').eq(1).ETooltips({
+      pos: 'right'
+    });
+    $('.ETooltips').eq(2).ETooltips({
+      pos: 'bottom'
+    });
+    $('.ETooltips').eq(3).ETooltips({
+      pos: 'left'
+    });

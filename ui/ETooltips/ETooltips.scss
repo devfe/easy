@@ -1,0 +1,106 @@
+.ETooltips {
+  position: absolute;
+  display: none;
+}
+.ETooltips-close {
+  position: absolute;
+  color: #ff6600;
+  font: 12px "simsun";
+  cursor: pointer;
+}
+
+.ETooltips-top .ETooltips-close {
+  right: 1px;
+  top: 0px;
+}
+
+.ETooltips-bottom .ETooltips-close {
+  right: 1px;
+  top: 5px;
+}
+
+.ETooltips-left .ETooltips-close {
+  right: 6px;
+  top: 1px;
+}
+
+.ETooltips-right .ETooltips-close {
+  right: 1px;
+  top: 1px;
+}
+
+.ETooltips-arr {
+  position: absolute;
+  background-image: url(http://misc.360buyimg.com/product/skin/2012/i/arrow.gif);
+  background-repeat: no-repeat;
+  overflow: hidden;
+}
+
+.ETooltips-top {
+  padding-bottom: 5px;
+}
+
+.ETooltips-top .ETooltips-arr {
+  left: 10px;
+  bottom: 0;
+  width: 11px;
+  height: 6px;
+  background-position: 0 -5px;
+  _bottom: -1px;
+}
+
+.ETooltips-bottom {
+  padding-top: 5px;
+}
+
+.ETooltips-bottom .ETooltips-arr {
+  top: 0;
+  left: 10px;
+  width: 11px;
+  height: 6px;
+  background-position: 0 0;
+}
+
+.ETooltips-left {
+  padding-right: 5px;
+}
+
+.ETooltips-left .ETooltips-arr {
+  right: 0;
+  top: 10px;
+  width: 6px;
+  height: 11px;
+  background-position: -5px 0;
+}
+
+.ETooltips-right {
+  padding-left: 5px;
+}
+
+.ETooltips-right .ETooltips-arr {
+  top: 10px;
+  left: 0;
+  width: 6px;
+  height: 11px;
+  background-position: 0 0;
+}
+
+.ETooltips-con {
+  float: left;
+  padding: 10px;
+  background: #fffdee;
+  border: 1px solid #edd28b;
+  color: #ff6501;
+  -moz-box-shadow: 0 0 2px 2px #eee;
+  -webkit-box-shadow: 0 0 2px 2px #eee;
+  box-shadow: 0 0 2px 2px #eee;
+}
+
+.ETooltips-con a, .ETooltips-con a:hover, .ETooltips-con a:visited {
+  color: #005fab;
+  text-decoration: none;
+}
+
+.ETooltips-con a:hover {
+  text-decoration: underline;
+}

@@ -224,7 +224,7 @@ gulp.task('concat_js', function () {
        .pipe(sourcemaps.init())
        .pipe(uglify({
            output: {
-               ascii_only: true,
+               ascii_only: true
            },
            outSourceMap: path.join(buildComboDir + 'easy.js.map'),
            sourceRoot: buildComboDir
