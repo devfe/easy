@@ -27,14 +27,19 @@
         id      : 'ETooltips-{uid}',
         x       : 0,
         y       : 0,
+        zIndex  : null,
+        // 初始化后是否移除tirgger上的title属性，防止默认的title与tooltips重合
+        rmTitle : true,
         template: '\
         <div class="ETooltips ETooltips-{pos}">\
             <div class="ETooltips-arr"></div>\
-            <div class="ETooltips-close" style="display:none;">&times;</div>\
-            <div class="ETooltips-con">{content}</div>\
+            <div class="ETooltips-close" data-tooltips="close" style="display:none;">&times;</div>\
+            <div class="ETooltips-con" data-tooltips="content">{content}</div>\
         </div>',
         selector: {
-            trigger: '[data-role="tooltips"]'
+            trigger: '[data-role="tooltips"]',
+            content: '[data-tooltips="content"]',
+            close  : '[data-tooltips="close"]'
         }
     };
 
@@ -59,6 +64,7 @@
 
         bindEvent: function () {
             var _this = this;
+            var $document = $(document);
 
             var eventEnter = [
                 'mouseenter',
@@ -78,6 +84,17 @@
             this.$el
                 .unbind(eventExit)
                 .bind(eventExit, function () {
+                    _this.$tooltips.hide();
+                });
+
+            var eventClose = [
+                'click',
+                this._name,
+                this._uid
+            ].join('.');
+            $document
+                .undelegate(eventClose)
+                .delegate(this.settings.selector.close, eventClose, function () {
                     _this.$tooltips.hide();
                 });
         },
@@ -127,7 +144,7 @@
                 return false;
             }
 
-            var content  = settings.content || this.$el.attr('title');
+            var content  = settings.content || this.$el.attr('title') || '[error] title or content not given.';
             var tooltips = settings.template
                 .replace('{pos}', settings.pos)
                 .replace('{content}', content);
@@ -137,14 +154,28 @@
             this.$tooltips.attr('id', id);
             $('body').append(this.$tooltips);
 
+
             if (settings.close) {
-                this.$tooltips.find('.ETooltips-close').show();
+                this.$tooltips.find(settings.selector.close).show();
             }
+            if (settings.rmTitle) {
+                this.$el.removeAttr('title');
+            }
+
+            var style = {};
+            if (settings.width) { style['width'] = settings.width; }
+            if ( settings.zIndex ) { style['z-index'] = settings.zIndex; }
+
+            this.$tooltips.css(style);
 
             this.width  = this.$tooltips.outerWidth();
             this.height = this.$tooltips.outerHeight();
 
             //console.log('Width: %s | Height: %s', this.width, this.height);
+        },
+
+        setContnet: function (content) {
+            this.$tooltips.find(this.settings.selector.content).html(content);
         }
     };
 

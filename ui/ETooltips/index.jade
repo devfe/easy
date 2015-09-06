@@ -15,22 +15,32 @@ block content
   fieldset
     legend Normal
     .demo
-      a(href="#none" data-role="tooltips" title="This is a tool tips. placement:top", class="tips") Tooltips top
+      a(href="#none" data-role="tooltips" title="This is a tool tips. placement:top", class="tips") Tooltips top[with default title]
       a(href="#none" data-role="tooltips" title="This is a tool tips. placement:right", class="tips") Tooltips right
       a(href="#none" data-role="tooltips" title="This is a tool tips. placement:bottom", class="tips") Tooltips bottom
       a(href="#none" data-role="tooltips" title="This is a tool tips. placement:left", class="tips") Tooltips left
+      a(href="#none" data-role="tooltips" class="tips") Tooltips empty
 
 block localScript
   script.
-    $('.tips').eq(0).ETooltips({
-      pos: 'top'
+    var text = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In non purus in leo fermentum mattis id ut felis. Aenean blandit erat maximus lacus blandit pharetra. Nullam ac finibus elit. Pellentesque dictum lectus non pellentesque posuere. Pellentesque non sagittis nisi. Aliquam sit amet lectus vehicula';
+    var tips1 = $('.tips').eq(0).ETooltips({
+      pos: 'top',
+      rmTitle: false
     });
     $('.tips').eq(1).ETooltips({
-      pos: 'right'
+      pos: 'right',
+      width: 300,
+      content: '[right]' + text
     });
     $('.tips').eq(2).ETooltips({
-      pos: 'bottom'
+      pos: 'bottom',
+      width: 300,
+      content: '[bottom]' + text
     });
     $('.tips').eq(3).ETooltips({
       pos: 'left'
+    });
+    $('.tips').eq(4).ETooltips({
+      pos: 'right'
     });
